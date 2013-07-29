@@ -21,7 +21,6 @@ function sampi_admin_init() {
 	
 	sampi_admin_auth ();
 	sampi_get_params ();
-	sampi_admin_settings ();
 	$db->getSettings();
 	sampi_admin_header ();
 	sampi_admin_theme ();
@@ -41,10 +40,10 @@ function sampi_admin_auth() {
 	} elseif (! isset ( $_COOKIE ['username'] )) {
 		if (isset ( $_POST ['login'] ['username'] ) && isset ( $_POST ['login'] ['password'] )) {
 			$username = $_POST ['login'] ['username'];
-			$password = sha1 ( $db->getSecurityKey() . $_POST ['login'] ['password'] . $db->getSecurityKey() );
+			$password = $_POST ['login'] ['password'];
 			if ($db->checkAuth($username, $password) !== false) {
-				setcookie ( 'username', $username );
-				setcookie ( 'password', $password );
+				setcookie ( 'username', $username, time() + 60 * 60 * 24 * 30 );
+				setcookie ( 'password', $password, time() + 60 * 60 * 24 * 30 );
 			} else {
 				$error = true;
 				include (ADMIN_ROOT . '/login.php');
@@ -61,58 +60,10 @@ function sampi_admin_auth() {
 			$current_user = $username;
 		} else {
 			$error = true;
+			setcookie ( 'username', null, time () - 3600 );
+			setcookie ( 'password', null, time () - 3600 );
 			include (ADMIN_ROOT . '/login.php');
 			die ();
-		}
-	}
-}
-
-/**
- * Saves settings to MySQL database
- */
-function sampi_admin_settings() {
-	global $db, $source, $current_user;
-	if (isset ( $_POST ['settings'] )) {
-		$settings = $_POST ['settings'];
-		foreach ( $settings as $panel => $values ) {
-			if (array_search ( 'Save', $values )) {
-				$source = $panel;
-			}
-		}
-		
-		if ($source !== NULL) {
-			$panels = $db->getPanels();
-			switch ($panels [$source]) {
-				case 'post' :
-					foreach ( $_POST ['settings'] [$source] as $key => $value ) {
-						if ($name !== 'submit') {
-							$$key = $value;
-						}
-					}
-					// TODO Querys to SampiAdminDbFunctions class
-					$query = "INSERT INTO sampi_posts (date, author, title, content) VALUES ('" . date ( 'Y-m-d H:i:s' ) . "', '$current_user', '$title', '$content')";
-					mysqli_query ( $con, $query );
-					break;
-				case 'general' :
-					foreach ( $_POST ['settings'] [$source] as $name => $value ) {
-						if ($name !== 'submit') {
-							mysqli_query ( $con, "UPDATE sampi_settings SET setting_value='$value' WHERE setting_name='$name'" );
-						}
-					}
-					break;
-				case 'add_user' :
-					foreach ( $_POST ['settings'] [$source] as $key => $value ) {
-						if ($name !== 'submit') {
-							$$key = $value;
-						}
-					}
-					$password = sha1 ( $security_key [0] . $password . $security_key [0] );
-					$query = "INSERT INTO sampi_users (username, password, full_name, rights, twitter_user) VALUES ('$username', '$password', '$full_name', '$rights', '$twitter_user')";
-					mysqli_query ( $con, $query );
-					break;
-				default :
-					break;
-			}
 		}
 	}
 }
@@ -198,8 +149,25 @@ class SampiAdminDbFunctions extends SampiDbFunctions {
 		$stmt->bind_param('i', $p);
 		$stmt->execute();
 		$stmt->bind_result( $panel_nr, $name, $filename );
+		$stmt->fetch();
 		return new SampiAdminPanel($panel_nr, $name, $filename);
 	}
+	public function getSinglePanelByName($p) {
+		$stmt = $this->con->prepare( "SELECT panel_nr, name, filename FROM sampi_panels WHERE filename=?" );
+		$stmt->bind_param('s', $p);
+		$stmt->execute();
+		$stmt->bind_result( $panel_nr, $name, $filename );
+		$stmt->fetch();
+		return new SampiAdminPanel($panel_nr, $name, $filename);
+	}
+	public function saveSetting($setting, $value) {
+		$stmt = $this->con->prepare( "UPDATE sampi_settings SET setting_value=? WHERE setting_name=?" );
+		$stmt->bind_param('ss', $value, $setting);
+		$stmt->execute();
+		$stmt->free_result();
+		$stmt->close();
+	}
+	
 }
 
 class SampiAdminPanel {
@@ -214,6 +182,11 @@ class SampiAdminPanel {
 	public function show() {
 		include ADMIN_ROOT.'/theme/'.admin_theme.'/print_panel.php';
 	}
+	public function showBody() {
+		global $panelBody;
+		$panelBody = true;
+		include ADMIN_ROOT.'/theme/'.admin_theme.'/print_panel.php';
+	}
 	public function getNr() {
 		return $this->panel_nr;
 	}
@@ -222,6 +195,9 @@ class SampiAdminPanel {
 	}
 	public function getTitle() {
 		return $this->name;
+	}
+	public function getFilename() {
+		return $this->filename;
 	}
 }
 ?>

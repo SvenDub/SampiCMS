@@ -32,7 +32,7 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 	$security_key = $db->getSecurityKey ();
 	
 	$username = $_POST ['username'];
-	$password = sha1 ( $security_key . $_POST ['password'] . $security_key );
+	$password = $_POST ['password'];
 	
 	$user = $db->checkAuth ( $username, $password );
 	

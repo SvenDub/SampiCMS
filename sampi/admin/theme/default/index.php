@@ -15,7 +15,7 @@ $phpdoc;
 	<?php sampi_admin_theme_header(); ?>
 	<?php sampi_admin_sidebar(); ?>
 	<div id="settings">
-		<form action="" method="post" name="settings">
+		<form action="#" method="post" name="settings">
 		<?php sampi_admin_mode_selector(); ?>
 		</form>
 	</div>

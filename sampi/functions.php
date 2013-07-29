@@ -257,10 +257,8 @@ function sampi_per_page_selector() {
  * Includes global- and theme-sidebar.
  */
 function sampi_sidebar() {
-	print ("<div id='sidebar'>") ;
 	(@include_once (ROOT . '/sampi/sidebar.php')) || sampi_error ( 200, 'sidebar.php', true );
 	(@include_once (ROOT . '/sampi/theme/' . theme . '/sidebar.php')) || sampi_error ( 201, 'sidebar.php', false );
-	print ("</div>") ;
 }
 
 /**
@@ -397,8 +395,8 @@ class SampiDbFunctions {
 	 */
 	function checkAuth($username, $password) {
 		list ( $id, $db_username, $db_password, $full_name, $rights, $twitter_user ) = $this->con->query ( "SELECT id, username, password, full_name, rights, twitter_user FROM sampi_users WHERE username='$username'" )->fetch_row ();
-	
-		if ($db_username == $username && $db_password == $password) {
+
+		if ($db_username == $username && crypt($password, $db_password) == $db_password) {
 			return array (
 					'id' => $id,
 					'username' => $username,
@@ -560,6 +558,28 @@ class SampiDbFunctions {
 		}
 		$stmt->free_result();
 		$stmt->close();
+	}
+	
+	function newAuthor($username, $password, $full_name, $rights, $twitter_user, $facebook_user, $google_plus_user) {
+		$success = false;
+		
+		$salt = sprintf ( "$2a$%02d$", 10 ) . strtr ( base64_encode ( mcrypt_create_iv ( 16, MCRYPT_DEV_URANDOM ) ), '+', '.' ); // Create password salt
+				
+		$hash = crypt ( $password, $salt ); // Encrypt password
+		
+		$stmt = $this->con->prepare( "INSERT INTO sampi_users (username, password, full_name, twitter_user, facebook_user, google_plus_user) VALUES (?,?,?,?,?,?)" );
+		$stmt->bind_param('ssssss', $username, $hash, $full_name, $twitter_user, $facebook_user, $google_plus_user);
+		$stmt->execute();
+		if ($stmt->affected_rows > 0) {
+			$success = true;
+		}
+		$stmt->free_result();
+		$stmt->close();
+		if ($success) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	function getAuthorData($username) {

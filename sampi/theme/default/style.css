@@ -19,26 +19,29 @@ div#content {
 
 div#header {
 	background-image: url('images/header.png');
+	background-size: cover;
+	background-position: left center;
 	background-repeat: no-repeat;
 	color: #000000;
 	text-shadow: 2px 2px 2px #C8C8C8;
-	height: 100px;
+	height: 150px;
 	padding: 5px;
-	margin: 0px;
+	margin: 10px;
 }
 
-div#sidebar {
-	background-color: #FFFFFF;
+div#sidebarContainer {
 	width: 200px;
-	margin: 10px;
-	padding: 5px;
-	min-height: 150px;
-	height: 100%;
 	display: table-cell;
 	min-width: 200px;
+	position: relative;
+	left: 10px;
 }
 
-div#content>div#sidebar {
+div#sidebarContainer > div#sidebar {
+	padding: 5px;
+	padding-bottom: 0px;
+	min-height: 150px;
+	background-color: #FFFFFF;
 	box-shadow: 2px 2px 2px #C8C8C8;
 	border-radius: 2px;
 }
@@ -47,6 +50,7 @@ div#posts {
 	display: table-cell;
 	width: 100%;
 	vertical-align: top;
+	padding-left: 10px;
 }
 
 div[id^="post_"] {
@@ -285,6 +289,27 @@ div.textarea-wrapper>textarea {
 	width: 100%;
 }
 
+input[type="button"],input[type="reset"] {
+	box-shadow: 1px 1px 1px #C8C8C8;
+	border-radius: 5px;
+	border-width: 1px;
+	padding: 5px;
+	background-color: #F2F2F2;
+	color: #000;
+	border: none;
+	margin-top: 5px;
+	margin-left: 5px;
+}
+
+input[type="button"]:hover,input[type="reset"]:hover {
+	box-shadow: 2px 2px 2px #C8C8C8 inset, -1px -1px 1px #C8C8C8 inset;
+}
+
+input[type="button"]:active,input[type="reset"]:active {
+	box-shadow: 2px 2px 2px #C8C8C8 inset, -1px -1px 1px #C8C8C8 inset;
+	background-color: #E2E2E2;
+}
+
 input[type="submit"],input.button-main {
 	box-shadow: 1px 1px 1px #C8C8C8;
 	border-radius: 5px;
@@ -306,26 +331,4 @@ input[type="submit"]:hover,input.button-main:hover {
 input[type="submit"]:active,input.button-main:active {
 	box-shadow: 2px 2px 2px #88E inset, -1px -1px 1px #88E inset;
 	background-color: #39AFFF;
-}
-
-input[type="button"],input[type="reset"] {
-	box-shadow: 1px 1px 1px #C8C8C8;
-	border-radius: 5px;
-	border-width: 1px;
-	padding: 5px;
-	background-color: #F2F2F2;
-	color: #000;
-	border: none;
-	margin-top: 5px;
-	
-	margin-left: 5px;
-}
-
-input[type="button"]:hover,input[type="reset"]:hover {
-	box-shadow: 2px 2px 2px #C8C8C8 inset, -1px -1px 1px #C8C8C8 inset;
-}
-
-input[type="button"]:active,input[type="reset"]:active {
-	box-shadow: 2px 2px 2px #C8C8C8 inset, -1px -1px 1px #C8C8C8 inset;
-	background-color: #E2E2E2;
 }
