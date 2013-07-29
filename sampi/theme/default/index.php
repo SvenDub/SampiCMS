@@ -1,10 +1,10 @@
 <?php
 /**
  * SampiCMS theme index
- * SampiCMS's default website theme
+ * SampiCMS's default theme
  *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Theme\defaultSite
+ * @package SampiCMS\Theme\default
  */
 /**
  * Start PHPDoc
