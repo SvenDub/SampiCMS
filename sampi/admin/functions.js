@@ -61,9 +61,10 @@ function saveSettings(panel) {
     case "post":
 	var title = document.getElementById("settings[post][title]").value;
 	var content = document.getElementById("settings[post][content]").value;
+	var keywords = document.getElementById("settings[post][keywords]").value;
 
 	xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
-		+ panel + "&title=" + title + "&content=" + content, true);
+		+ panel + "&title=" + title + "&content=" + content + "&keywords=" + keywords, true);
 	break;
 
     case "add_user":

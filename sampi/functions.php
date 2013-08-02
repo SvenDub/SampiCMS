@@ -148,7 +148,14 @@ function sampi_mode_selector() {
 		$static->show();
 	} elseif ($p !== false) {
 		$post = $db->getSinglePost($p);
-		$post->show(SampiPost::$SHOW_SINGLE);
+		if ($post->getNr() == null) {
+			$post = new SampiPost(404, 'Error 404, post not found!', null, 'The requested post could not be found.', null, null);
+			$post->show(SampiPost::$SHOW_ERROR);
+		} elseif (isset($_GET['edit'])) {
+			$post->show(SampiPost::$SHOW_EDIT);
+		} else {
+			$post->show(SampiPost::$SHOW_SINGLE);
+		}
 	} else {
 		$posts = $db->getPosts();
 		foreach ($posts as $key => $val) {
@@ -275,6 +282,11 @@ function sampi_integration_meta() {
 	$google = true;
 	if ($p) {
 		$post = $db->getSinglePost($p);
+		echo '
+			<meta name="description" content="' . substr(strip_tags( $post->getContent()),0,250) . '" />
+			<meta name="author" content="' . $post->getAuthor(SampiPost::$AUTHOR_FULL_NAME) . '" />
+			<meta name="keywords" content="' . $post->getKeywords() . '" />
+		';
 		if ($twitter) {
 			echo '
 				<meta name="twitter:card" content="summary" />
@@ -301,6 +313,7 @@ function sampi_integration_meta() {
 			';
 		}
 	} else {
+		// TODO Blogstream meta tags, global user
 		if ($opengraph) {
 			echo '
 				<meta property="og:title" content="' . sampi_info('title') . '" />
@@ -421,15 +434,15 @@ class SampiDbFunctions {
 		$posts = array ();
 		$offset = $page * $per_page - $per_page;
 		if ($sort == "ASC") {
-			$stmt = $this->con->prepare("SELECT post_nr, date, author, title, content FROM sampi_posts ORDER BY post_nr ASC LIMIT ?, ?");
+			$stmt = $this->con->prepare("SELECT post_nr, date, author, title, content, keywords FROM sampi_posts ORDER BY post_nr ASC LIMIT ?, ?");
 		} else {
-			$stmt = $this->con->prepare("SELECT post_nr, date, author, title, content FROM sampi_posts ORDER BY post_nr DESC LIMIT ?, ?");
+			$stmt = $this->con->prepare("SELECT post_nr, date, author, title, content, keywords FROM sampi_posts ORDER BY post_nr DESC LIMIT ?, ?");
 		}
 		$stmt->bind_param('ii', $offset, $per_page);
 		$stmt->execute();
-		$stmt->bind_result($post_nr, $date, $author, $title, $content);
+		$stmt->bind_result($post_nr, $date, $author, $title, $content, $keywords);
 		while ( $stmt->fetch() ) {
-			$posts [$post_nr] = new SampiPost( $post_nr, $title, $author, $content, $date );
+			$posts [$post_nr] = new SampiPost( $post_nr, $title, $author, $content, $date, $keywords );
 		}
 		$stmt->free_result();
 		$stmt->close();
@@ -441,12 +454,13 @@ class SampiDbFunctions {
 	 * Selection based on url parameters.
 	 */
 	function getSinglePost($p) {
-		$stmt = $this->con->prepare( "SELECT post_nr, date, author, title, content FROM sampi_posts WHERE post_nr=?" );
+		$stmt = $this->con->prepare( "SELECT post_nr, date, author, title, content, keywords FROM sampi_posts WHERE post_nr=?" );
 		$stmt->bind_param('i', $p);
 		$stmt->execute();
-		$stmt->bind_result($post_nr, $date, $author, $title, $content);
+		$stmt->bind_result($post_nr, $date, $author, $title, $content, $keywords);
+		$stmt->store_result();
 		$stmt->fetch();
-		$post = new SampiPost($post_nr, $title, $author, $content, $date);
+		$post = new SampiPost($post_nr, $title, $author, $content, $date, $keywords);
 		$stmt->free_result();
 		$stmt->close();
 		return $post;
@@ -527,12 +541,12 @@ class SampiDbFunctions {
 	 *        	Used in combination with $username to authenticate the poster.
 	 * @return boolean True on success, false on failure
 	 */
-	function newPost($title, $content, $username, $password) {
+	function newPost($title, $content, $keywords, $username, $password) {
 		if ($title !== "" && $content !== "") {
 			$author = $this->checkAuth ( $username, $password )['username'];
 			$date = date ( 'Y-m-d H:i:s' );
-			$stmt = $this->con->prepare( "INSERT INTO sampi_posts (date, author, title, content) VALUES (?, ?, ?, ?)" );
-			$stmt->bind_param('ssss', $date, $author, $title, $content);
+			$stmt = $this->con->prepare( "INSERT INTO sampi_posts (date, author, title, content, keywords) VALUES (?, ?, ?, ?, ?)" );
+			$stmt->bind_param('ssss', $date, $author, $title, $content, $keywords);
 			$stmt->execute();
 			if ($stmt->affected_rows > 0) {
 				$stmt->free_result();
@@ -721,6 +735,7 @@ class SampiPost {
 	private $comments;
 	private $commentsCount;
 	private $author;
+	private $keywords;
 	
 	/**
 	 * @var string
@@ -741,23 +756,32 @@ class SampiPost {
 	/**
 	 * @var string
 	 */
-	public static $AUTHOR_GOOGLE_PLUS = 'google_plus_accountnr';
+	public static $AUTHOR_GOOGLE_PLUS = 'google_plus_user';
 	/**
-	 * @var string
+	 * @var int
 	 */
-	public static $SHOW_SINGLE = 'single';
+	public static $SHOW_SINGLE = 0x0;
 	/**
-	 * @var string
+	 * @var int
 	 */
-	public static $SHOW_MULTIPLE = 'multiple';
+	public static $SHOW_MULTIPLE = 0x1;
+	/**
+	 * @var int
+	 */
+	public static $SHOW_ERROR = 0x2;
+	/**
+	 * @var int
+	 */
+	public static $SHOW_EDIT = 0x3;
 	
-	function __construct($post_nr, $title, $author, $content, $date) {
+	function __construct($post_nr, $title, $author, $content, $date, $keywords) {
 		$db = new SampiDbFunctions();
 		$this->nr = $post_nr;
 		$this->title = $title;
 		$this->author = $author;
 		$this->content = $content;
 		$this->date = $date;
+		$this->keywords = $keywords;
 		
 		$this->author = $db->getAuthorData($this->author);
 		$this->commentsCount = $db->getCommentsCount($this->nr);
@@ -822,10 +846,19 @@ class SampiPost {
 		return $this->commentsCount;
 	}
 	public function show($mode) {
-		if ($mode == self::$SHOW_SINGLE) {
-			include ROOT . '/sampi/theme/' . theme . '/print_single_post.php';
-		} elseif ($mode == self::$SHOW_MULTIPLE) {
-			include ROOT . '/sampi/theme/' . theme . '/print_post.php';
+		switch ($mode) {
+			case self::$SHOW_SINGLE :
+				include ROOT . '/sampi/theme/' . theme . '/print_single_post.php';
+				break;
+			case self::$SHOW_MULTIPLE :
+				include ROOT . '/sampi/theme/' . theme . '/print_post.php';
+				break;
+			case self::$SHOW_ERROR :
+				include ROOT . '/sampi/theme/' . theme . '/print_error_post.php';
+				break;
+			case self::$SHOW_EDIT :
+				include ROOT . '/sampi/theme/' . theme . '/edit_single_post.php';
+				break;
 		}
 	}
 	public function getContent() {
@@ -838,6 +871,9 @@ class SampiPost {
 		foreach ($this->comments as $key => $val) {
 			$val->show();
 		}
+	}
+	public function getKeywords() {
+		return $this->keywords;
 	}
 }
 

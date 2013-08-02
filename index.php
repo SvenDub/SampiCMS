@@ -18,7 +18,7 @@ if (substr_count ( $_SERVER ['HTTP_ACCEPT_ENCODING'], 'gzip' )) {
 define ( 'ROOT', '/var/www/sampi' );
 define ( 'REL_ROOT', '/sampi' );
 define ( 'ADMIN_ROOT', '/var/www/sampi/sampi/admin' );
-define ( 'ADMIN_REL_ROOT', '/sampi/admin' );
+define ( 'ADMIN_REL_ROOT', '/sampi/sampi/admin' );
 require_once ROOT . '/sampi/settings.php';
 require_once ROOT . '/sampi/functions.php';
 sampi_init ();

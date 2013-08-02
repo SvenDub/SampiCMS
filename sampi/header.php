@@ -16,6 +16,7 @@ $phpdoc;
 <title><?php echo sampi_info ( 'window_title' ); ?></title>
 <link href="<?php echo REL_ROOT.'/sampi/theme/'.theme.'/style.css'; ?>" type='text/css' rel='stylesheet' />
 <link href="<?php echo REL_ROOT.'/sampi/theme/'.theme.'/style.php'; ?>" type='text/css' rel='stylesheet' />
+<link href="<?php echo REL_ROOT . '/theme/' . theme . '/global_style.css'; ?>" type="text/css" rel="stylesheet" />
 <link href="<?php echo REL_ROOT.'/sampi/favicon.ico'; ?>" rel='shortcut icon' type='image/x-icon' />
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 <meta name="generator" content="SampiCMS <?php echo sampi_info('version'); ?>" />

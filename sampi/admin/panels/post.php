@@ -20,10 +20,11 @@ $content = '';
 if (isset ( $_GET ['title'] ) && isset ( $_GET ['content'] )) {
 	$title = $_GET ['title'];
 	$content = $_GET ['content'];
+	$keywords = $_GET ['keywords'];
 	if ($title !== null && $content !== null) {
 		$username = $_COOKIE ['username'];
 		$password = $_COOKIE ['password'];
-		$p = $db->newPost ( $title, $content, $username, $password );
+		$p = $db->newPost ( $title, $content, $keywords, $username, $password );
 		if ($p == false) {
 			echo '<span style="color: #F00;">Error while posting post <b>' . $title . '</b>!</span>';
 		} else {
@@ -49,5 +50,9 @@ if (isset ( $_GET ['title'] ) && isset ( $_GET ['content'] )) {
 		<td><div class="textarea-wrapper">
 				<textarea id="settings[post][content]" rows="10" cols="50"><?php echo $content; ?></textarea>
 			</div></td>
+	</tr>
+	<tr>
+		<td>Keywords</td>
+		<td><input type="text" id="settings[post][keywords]" value="<?php echo $keywords; ?>" /></td>
 	</tr>
 </table>

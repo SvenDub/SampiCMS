@@ -84,6 +84,10 @@ div[id^="post_"][id$="_header_postedby"] {
 	font-size: 0.9em;
 }
 
+input[id^="post_"][id$="_header_edit"] {
+	float: right;
+}
+
 div[id^="post_"][id$="_footer"] {
 	border-top: 1px #AAAAAA solid;
 	color: #AAAAAA;
@@ -170,6 +174,7 @@ input#comment_post_form_type {
 div[id^="static_"] {
 	background-color: #FFFFFF;
 	margin: 10px;
+	margin-top: 0px;
 	padding-bottom: 1px;
 }
 

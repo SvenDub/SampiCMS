@@ -20,6 +20,7 @@ $phpdoc;
         </title>
        	<link href="<?php echo ADMIN_REL_ROOT.'/theme/'.theme.'/style.css'; ?>" type='text/css' rel='stylesheet' />
 <link href="<?php echo ADMIN_REL_ROOT.'/theme/'.theme.'/style.php'; ?>" type='text/css' rel='stylesheet' />
+<link href="<?php echo ADMIN_REL_ROOT . '/theme/' . admin_theme . '/global_style.css'; ?>" type="text/css" rel="stylesheet" />
 <link href="<?php echo ADMIN_REL_ROOT.'/favicon.ico'; ?>" rel='shortcut icon' type='image/x-icon' />
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 <meta name="generator" content="SampiCMS <?php echo sampi_info('version'); ?>" />

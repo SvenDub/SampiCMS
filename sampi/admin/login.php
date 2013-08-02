@@ -24,12 +24,11 @@ require_once ADMIN_ROOT . '/functions.php';
 $db = new SampiAdminDbFunctions ();
 $db->getSettings ();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 <title>Login - SampiCMS</title>
-<link href="<?php echo ADMIN_REL_ROOT.'/theme/'.admin_theme.'/style.css'; ?>" type='text/css' rel='stylesheet' />
-<link href="<?php echo ADMIN_REL_ROOT.'/theme/'.admin_theme.'/style.php'; ?>" type='text/css' rel='stylesheet' />
+<link href="<?php echo ADMIN_REL_ROOT . '/theme/' . admin_theme . '/global_style.css'; ?>" type="text/css" rel="stylesheet" />
 <link href="<?php echo ADMIN_REL_ROOT.'/favicon.ico'; ?>" rel='shortcut icon' type='image/x-icon' />
 </head>
 <body style="height: auto;">
