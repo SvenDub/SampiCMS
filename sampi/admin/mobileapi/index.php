@@ -9,12 +9,12 @@
  * Start PHPDoc
  */
 $phpdoc;
-define ( 'ROOT', '/var/www/sampi' );
-define ( 'REL_ROOT', '/sampi' );
-define ( 'ADMIN_ROOT', '/var/www/sampi/sampi/admin' );
-define ( 'ADMIN_REL_ROOT', '/sampi/sampi/admin' );
-define ( 'API_ROOT', '/var/www/sampi/sampi/admin/mobileapi' );
-define ( 'API_REL_ROOT', '/sampi/sampi/admin/mobileapi' );
+define ( 'ROOT', substr(dirname(__FILE__),0,-22) );
+define ( 'REL_ROOT', substr($_SERVER['SCRIPT_NAME'],0,-32) );
+define ( 'ADMIN_ROOT', ROOT . '/sampi/admin' );
+define ( 'ADMIN_REL_ROOT', REL_ROOT . '/sampi/admin' );
+define ( 'API_ROOT', ADMIN_ROOT . '/mobileapi' );
+define ( 'API_REL_ROOT', ADMIN_REL_ROOT . '/mobileapi' );
 
 require_once 'SampiMobileDbFunctions.php';
 $db = new SampiMobileDbFunctions ();

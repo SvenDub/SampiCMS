@@ -19,10 +19,10 @@ if (substr_count ( $_SERVER ['HTTP_ACCEPT_ENCODING'], 'gzip' )) {
 	ob_start ();
 }
 
-define ( 'ROOT', '/var/www/sampi' );
-define ( 'REL_ROOT', '/sampi' );
-define ( 'ADMIN_ROOT', '/var/www/sampi/sampi/admin' );
-define ( 'ADMIN_REL_ROOT', '/sampi/admin' );
+define ( 'ROOT', substr(dirname(__FILE__),0,-20) );
+define ( 'REL_ROOT', substr($_SERVER['SCRIPT_NAME'],0,-30) );
+define ( 'ADMIN_ROOT', ROOT . '/sampi/admin' );
+define ( 'ADMIN_REL_ROOT', REL_ROOT . '/sampi/admin' );
 require_once ROOT . '/sampi/settings.php';
 require_once ROOT . '/sampi/functions.php';
 

@@ -5,10 +5,12 @@
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
  * @package SampiCMS\Admin
  */
-var ROOT = "/var/www/sampi";
-var REL_ROOT = "/sampi";
-var ADMIN_ROOT = "/var/www/sampi/sampi/admin";
-var ADMIN_REL_ROOT = "/sampi/sampi/admin";
+var REL_ROOT;
+var ADMIN_REL_ROOT;
+window.onload = function() {
+    REL_ROOT = document.getElementsByName("REL_ROOT")[0].content;
+    ADMIN_REL_ROOT = document.getElementsByName("ADMIN_REL_ROOT")[0].content;
+};
 
 function saveSettings(panel) {
     var a = document.querySelectorAll('[data-name]');

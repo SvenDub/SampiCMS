@@ -13,22 +13,20 @@ $phpdoc;
 <!DOCTYPE html>
 <html>
 <head>
-<title>
-        	<?php
-									echo sampi_info ( 'admin_window_title' );
-									?>
-        </title>
-       	<link href="<?php echo ADMIN_REL_ROOT.'/theme/'.theme.'/style.css'; ?>" type='text/css' rel='stylesheet' />
+<title><?php echo sampi_info ( 'admin_window_title' ); ?></title>
+<link href="<?php echo ADMIN_REL_ROOT.'/theme/'.theme.'/style.css'; ?>" type='text/css' rel='stylesheet' />
 <link href="<?php echo ADMIN_REL_ROOT.'/theme/'.theme.'/style.php'; ?>" type='text/css' rel='stylesheet' />
 <link href="<?php echo ADMIN_REL_ROOT . '/theme/' . admin_theme . '/global_style.css'; ?>" type="text/css" rel="stylesheet" />
 <link href="<?php echo ADMIN_REL_ROOT.'/favicon.ico'; ?>" rel='shortcut icon' type='image/x-icon' />
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 <meta name="generator" content="SampiCMS <?php echo sampi_info('version'); ?>" />
-		<?php
-		if (file_exists ( ADMIN_ROOT . '/theme/' . theme . '/functions.js' )) {
-			echo '<script src="' . ADMIN_REL_ROOT . '/theme/' . theme . '/functions.js" type="text/javascript"></script>';
-		}
-		echo '<script src="' . ADMIN_REL_ROOT . '/functions.js" type="text/javascript"></script>';
-		?>
-    </head>
+<?php
+if (file_exists ( ADMIN_ROOT . '/theme/' . theme . '/functions.js' )) {
+	echo '<script src="' . ADMIN_REL_ROOT . '/theme/' . theme . '/functions.js" type="text/javascript"></script>';
+}
+echo '<script src="' . ADMIN_REL_ROOT . '/functions.js" type="text/javascript"></script>';
+?>
+<meta name="REL_ROOT" content="<?php echo REL_ROOT; ?>">
+<meta name="ADMIN_REL_ROOT" content="<?php echo ADMIN_REL_ROOT; ?>">
+</head>
 <body>

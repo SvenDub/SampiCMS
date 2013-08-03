@@ -14,11 +14,10 @@ if (substr_count ( $_SERVER ['HTTP_ACCEPT_ENCODING'], 'gzip' )) {
 } else {
 	ob_start ();
 }
-//require_once 'ChromePhp.php'; //Debug!!!
-define ( 'ROOT', '/var/www/sampi' );
-define ( 'REL_ROOT', '/sampi' );
-define ( 'ADMIN_ROOT', '/var/www/sampi/sampi/admin' );
-define ( 'ADMIN_REL_ROOT', '/sampi/sampi/admin' );
+define ( 'ROOT', dirname(__FILE__) );
+define ( 'REL_ROOT', substr($_SERVER['SCRIPT_NAME'],0,-10) );
+define ( 'ADMIN_ROOT', ROOT . '/sampi/admin' );
+define ( 'ADMIN_REL_ROOT', REL_ROOT . '/sampi/admin' );
 require_once ROOT . '/sampi/settings.php';
 require_once ROOT . '/sampi/functions.php';
 sampi_init ();

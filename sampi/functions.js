@@ -4,8 +4,12 @@
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
  * @package SampiCMS
  */
-var ROOT = "/var/www/sampi";
-var REL_ROOT = "/sampi";
+var REL_ROOT;
+var ADMIN_REL_ROOT;
+window.onload = function() {
+    REL_ROOT = document.getElementsByName("REL_ROOT")[0].content;
+    ADMIN_REL_ROOT = document.getElementsByName("ADMIN_REL_ROOT")[0].content;
+};
 
 function postComment() {
     var post_nr = document.getElementById("comment_post_form_post_nr").value;
@@ -55,8 +59,7 @@ function showComments(post_nr) {
 	}
 	;
     };
-    xmlhttp.open("GET", REL_ROOT + "/sampi/query_show_comments.php?post_nr=" + post_nr,
-	    true);
+    xmlhttp.open("GET", REL_ROOT + "/sampi/query_show_comments.php?post_nr=" + post_nr, true);
     xmlhttp.send(); // Send HttpRequest
     return false;
 }

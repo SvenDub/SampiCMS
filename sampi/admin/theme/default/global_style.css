@@ -57,6 +57,7 @@ div#popup_table {
 	min-height: 50px;
 	margin-left: -100px;
 	margin-top: -25px;
+	z-index: 100;
 }
 
 div#popup_cell {

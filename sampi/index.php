@@ -10,8 +10,8 @@
  */
 $phpdoc;
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 <title>SampiCMS</title>
 </head>
@@ -21,8 +21,8 @@ $phpdoc;
 		This site is powered by <a href="">SampiCMS</a>, a lightweight Content Management System.
 	</p>
 	<p>
-		Looking for the site? Go back <a href="<?php echo substr($_SERVER['PHP_SELF'],0,-15); ?>">here</a>.<br />
-		Looking for the admin interface? You can find it at <a href="<?php echo substr($_SERVER['PHP_SELF'],0,-9).'admin'; ?>"><?php echo substr($_SERVER['PHP_SELF'],0,-9).'admin'; ?></a>
+		Looking for the site? Go back <a href="<?php echo substr($_SERVER['SCRIPT_NAME'],0,-15); ?>">here</a>.<br />
+		Looking for the admin interface? You can find it at <a href="<?php echo substr($_SERVER['SCRIPT_NAME'],0,-9).'admin'; ?>"><?php echo substr($_SERVER['SCRIPT_NAME'],0,-9).'admin'; ?></a>
 	</p>
 </body>
 </html>

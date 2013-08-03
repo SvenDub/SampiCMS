@@ -9,7 +9,7 @@
  * Start PHPDoc
  */
 $phpdoc;
-define ( 'sampi_version', '0.0.1' );
+define ( 'sampi_version', '0.0.1-alpha' );
 define ( 'db', '' );
 define ( 'db_user', '' );
 define ( 'db_pass', '' );
