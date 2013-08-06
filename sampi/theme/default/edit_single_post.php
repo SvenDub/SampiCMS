@@ -16,6 +16,7 @@ sampi_admin_auth();
 ?>
 <div id="post_<?php echo $this->getNr(); ?>">
 	<div id="post_<?php echo $this->getNr(); ?>_header">
+		<input type="button" class="button-main" id="post_<?php echo $this->getNr(); ?>_header_edit" value="Save" onclick="editPost();" />
 		<div id="post_<?php echo $this->getNr(); ?>_header_title" contenteditable="true"><?php echo $this->getTitle(); ?></div>
 		<div id="post_<?php echo $this->getNr(); ?>_header_postedby">Posted: <?php echo $this->getDate(); ?> by <?php echo $this->getAuthor(SampiPost::$AUTHOR_FULL_NAME) ?></div>
 	</div>

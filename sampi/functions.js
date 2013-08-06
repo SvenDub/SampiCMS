@@ -86,12 +86,37 @@ function hidePopup() {
 	}
 }
 
-/*if (isset ( $_POST ['type'] )) { // Post comment
-			if ($_POST ['type'] == 'comment') {
-				$post_nr = $_POST ['post_nr'];
-				$commenter = $_POST ['commenter'];
-				$comment = $_POST ['comment'];
-				$date = date ( 'Y-m-d H:i:s' );
-				$stmt = $db->newComment($post_nr, $commenter, $comment, $date);
-			}
-		}*/
+function editPost() {
+    var post_nr = getUrlVars()['p'];
+    var title = document.getElementById("post_" + post_nr + "_header_title").innerHTML;
+    var content = document.getElementById("post_" + post_nr + "_content").innerHTML;
+    // Create HttpRequest
+    var xmlhttp;
+    if (window.XMLHttpRequest) { // IE7+, Firefox, Chrome, Opera, Safari
+	xmlhttp = new XMLHttpRequest();
+    } else { // IE6, IE5
+	xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange = function() { // Handle HttpRequest
+	if (xmlhttp.readyState == 4) {
+	    if (xmlhttp.status == 200) {
+			showPopup(xmlhttp.responseText); // Show result
+	    } else {
+			showPopup("Error editing post!");
+	    }
+	}
+	;
+    };
+    xmlhttp.open("GET", REL_ROOT + "/sampi/admin/query_edit_post.php?post_nr=" + post_nr + "&title=" + title + "&content=" + content, true);
+    xmlhttp.send(); // Send HttpRequest
+    return false;
+}
+
+function getUrlVars() {
+    var map = {};
+    var parts = window.location.search.replace(/[?&]+([^=&]+)(=[^&]*)?/gi,
+	    function(m, key, value) {
+		map[key] = (value === undefined) ? true : value.substring(1);
+	    });
+    return map;
+}

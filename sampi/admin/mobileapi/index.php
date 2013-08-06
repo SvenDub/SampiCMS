@@ -57,7 +57,8 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 			if ($user != false) {
 				$title = @$_POST ['title'];
 				$content = @$_POST ['content'];
-				if ($db->newPost ( $title, $content, $username, $password ) == 1) {
+				$keywords = @$_POST ['keywords'];
+				if ($db->newPost ( $title, $content, $keywords, $username, $password ) == true) {
 					$response ['success'] = 1;
 				} else {
 					$response ['error'] = 1;

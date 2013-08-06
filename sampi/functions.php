@@ -544,18 +544,43 @@ class SampiDbFunctions {
 	function newPost($title, $content, $keywords, $username, $password) {
 		if ($title !== "" && $content !== "") {
 			$author = $this->checkAuth ( $username, $password )['username'];
-			$date = date ( 'Y-m-d H:i:s' );
-			$stmt = $this->con->prepare( "INSERT INTO sampi_posts (date, author, title, content, keywords) VALUES (?, ?, ?, ?, ?)" );
-			$stmt->bind_param('ssss', $date, $author, $title, $content, $keywords);
-			$stmt->execute();
-			if ($stmt->affected_rows > 0) {
-				$stmt->free_result();
-				$stmt->close();
-				return true;
+			if ($author !== false) {
+				$date = date ( 'Y-m-d H:i:s' );
+				$dateUpdated = date ( 'Y-m-d H:i:s' );
+				$stmt = $this->con->prepare( "INSERT INTO sampi_posts (date, date_updated, author, title, content, keywords) VALUES (?, ?, ?, ?, ?, ?)" );
+				$stmt->bind_param('ssssss', $date, $dateUpdated, $author, $title, $content, $keywords);
+				$stmt->execute();
+				if ($stmt->affected_rows > 0) {
+					$stmt->free_result();
+					$stmt->close();
+					return true;
+				} else {
+					$stmt->free_result();
+					$stmt->close();
+					return false;
+				}
 			} else {
-				$stmt->free_result();
-				$stmt->close();
 				return false;
+			}
+		}
+	}
+	
+	function editPost($post_nr, $title, $content, $keywords, $username, $password) {
+		if ($post_nr !== "" && $title !== "" && $content !== "") {
+			if ($this->checkAuth($username, $password)) {
+				$date = date ( 'Y-m-d H:i:s' );
+				$stmt = $this->con->prepare( "UPDATE sampi_posts SET date_updated=?,title=?,content=?,keywords=? WHERE post_nr=?" );
+				$stmt->bind_param('ssssi', $date, $title, $content, $keywords, $post_nr);
+				$stmt->execute();
+				if ($stmt->affected_rows > 0) {
+					$stmt->free_result();
+					$stmt->close();
+					return true;
+				} else {
+					$stmt->free_result();
+					$stmt->close();
+					return false;
+				}
 			}
 		}
 	}
