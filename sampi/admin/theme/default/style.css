@@ -86,3 +86,21 @@ div[id^="panel_"][id$="_footer"] {
 	position: relative;
 	height: 30px;
 }
+
+ol.edit_list {
+	width: inherit;
+	line-height: 18px;
+}
+
+ol.edit_list > li:hover {
+	background-color: #F2F2F2;
+}
+
+ol.edit_list > li img {
+	display: none;
+}
+
+ol.edit_list > li:hover img {
+	display: inline;
+	vertical-align: text-top;
+}

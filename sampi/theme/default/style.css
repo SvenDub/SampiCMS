@@ -106,6 +106,12 @@ div[id^="post_"][id$="_header_date_updated"] {
 
 input[id^="post_"][id$="_header_edit"] {
 	float: right;
+	margin-right: 5px;
+}
+
+input[id^="post_"][id$="_header_delete"] {
+	float: right;
+	margin-right: 5px;
 }
 
 div[id^="post_"][id$="_footer"] {
@@ -156,10 +162,6 @@ div[id^="comment_"][id$="_header_nr"] {
 	display: table-cell;
 	vertical-align: middle;
 	text-align: center;
-}
-
-div[id^="comment_"][id$="_header_postedby"] {
-	font-style: italic;
 }
 
 div#comment_post_header {

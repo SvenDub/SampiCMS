@@ -66,7 +66,8 @@ function saveSettings(panel) {
 	var keywords = document.getElementById("settings[post][keywords]").value;
 
 	xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
-		+ panel + "&title=" + title + "&content=" + content + "&keywords=" + keywords, true);
+		+ panel + "&title=" + title + "&content=" + content
+		+ "&keywords=" + keywords, true);
 	break;
 
     case "add_user":
@@ -94,6 +95,34 @@ function saveSettings(panel) {
     }
     xmlhttp.send(); // Send HttpRequest
     return false;
+}
+
+function deletePost(post_nr) {
+    var confirmed = window
+	    .confirm('Are you sure you want to delete this post?\nThis cannot be undone!');
+    if (confirmed == true) {
+	// Create HttpRequest
+	var xmlhttp;
+	if (window.XMLHttpRequest) { // IE7+, Firefox, Chrome, Opera, Safari
+	    xmlhttp = new XMLHttpRequest();
+	} else { // IE6, IE5
+	    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange = function() { // Handle HttpRequest
+	    if (xmlhttp.readyState == 4) {
+		if (xmlhttp.status == 200) {
+		    showPopup(xmlhttp.responseText); // Show result
+		} else {
+		    showPopup("Error deleting post!");
+		}
+	    }
+	    ;
+	};
+	xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_delete_post.php?post_nr="
+		+ post_nr, true);
+	xmlhttp.send(); // Send HttpRequest
+	return false;
+    }
 }
 
 var popup_opacity = 1;

@@ -718,6 +718,22 @@ class SampiDbFunctions {
 		unset ( $settings, $setting_name, $setting_value );
 	}
 	
+	function deletePost($post_nr) {
+		$stmt = $this->con->prepare( "DELETE FROM sampi_posts WHERE post_nr = ?" );
+		$stmt->bind_param('i', $post_nr);
+		$stmt->execute();
+		if ($stmt->affected_rows > 0) {
+			$success = true;
+		}
+		$stmt->free_result();
+		$stmt->close();
+		if ($success) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 }
 
 /**
