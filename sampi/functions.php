@@ -978,6 +978,9 @@ class SampiComment {
 	public function getDate() {
 		return date ( date_format, strtotime ( $this->date ) );
 	}
+	public function getISODate() {
+		return date ( DateTime::ISO8601, strtotime ( $this->date ) );
+	}
 	
 	public function show() {
 		include ROOT . '/sampi/theme/' . theme . '/print_comment.php';
