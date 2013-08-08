@@ -90,6 +90,7 @@ function editPost() {
     var post_nr = getUrlVars()['p'];
     var title = document.getElementById("post_" + post_nr + "_header_title").innerHTML;
     var content = document.getElementById("post_" + post_nr + "_content").innerHTML;
+    var keywords = document.getElementById("post_" + post_nr + "_footer_keywords").innerHTML;
     // Create HttpRequest
     var xmlhttp;
     if (window.XMLHttpRequest) { // IE7+, Firefox, Chrome, Opera, Safari
@@ -107,7 +108,7 @@ function editPost() {
 	}
 	;
     };
-    xmlhttp.open("GET", REL_ROOT + "/sampi/admin/query_edit_post.php?post_nr=" + post_nr + "&title=" + title + "&content=" + content, true);
+    xmlhttp.open("GET", REL_ROOT + "/sampi/admin/query_edit_post.php?post_nr=" + post_nr + "&title=" + title + "&content=" + content + "&keywords=" + keywords, true);
     xmlhttp.send(); // Send HttpRequest
     return false;
 }

@@ -16,6 +16,7 @@ require_once ADMIN_ROOT . '/functions.php';
 $post_nr = (isset ( $_GET ["post_nr"] )) ? $post_nr = $_GET ["post_nr"] : $post_nr = false;
 $title = (isset ( $_GET ["title"] )) ? $title = $_GET ["title"] : $title = false;
 $content = (isset ( $_GET ["content"] )) ? $content = $_GET ["content"] : $content = false;
+$keywords = (isset ( $_GET ["keywords"] )) ? $keywords = $_GET ["keywords"] : $keywords = false;
 
 if ($post_nr && $title && $content) {
 		global $db;

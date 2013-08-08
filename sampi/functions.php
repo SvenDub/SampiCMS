@@ -149,7 +149,7 @@ function sampi_mode_selector() {
 	} elseif ($p !== false) {
 		$post = $db->getSinglePost($p);
 		if ($post->getNr() == null) {
-			$post = new SampiPost(404, 'Error 404, post not found!', null, 'The requested post could not be found.', null, null);
+			$post = new SampiPost(404, 'Error 404, post not found!', null, null, 'The requested post could not be found.', null, null);
 			$post->show(SampiPost::$SHOW_ERROR);
 		} elseif (isset($_GET['edit'])) {
 			$post->show(SampiPost::$SHOW_EDIT);
@@ -301,6 +301,7 @@ function sampi_integration_meta() {
 				<meta property="og:title" content="' . $post->getTitle() . '" />
 				<meta property="og:type" content="article" />
 				<meta property="article:published_time" content="' . $post->getISODate() . '" />
+				<meta property="article:modified_time" content="' . $post->getISODateUpdated() . '" />
 				<meta property="article:author" content="http://facebook.com/' . $post->getAuthor(SampiPost::$AUTHOR_FACEBOOK) . '" />
 				<meta property="og:url" content=" http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/?p=' . $post->getNr() .'" />
 				<meta property="og:site_name" content="' . sampi_info('title') . '"	/>
@@ -434,15 +435,15 @@ class SampiDbFunctions {
 		$posts = array ();
 		$offset = $page * $per_page - $per_page;
 		if ($sort == "ASC") {
-			$stmt = $this->con->prepare("SELECT post_nr, date, author, title, content, keywords FROM sampi_posts ORDER BY post_nr ASC LIMIT ?, ?");
+			$stmt = $this->con->prepare("SELECT post_nr, date, date_updated, author, title, content, keywords FROM sampi_posts ORDER BY post_nr ASC LIMIT ?, ?");
 		} else {
-			$stmt = $this->con->prepare("SELECT post_nr, date, author, title, content, keywords FROM sampi_posts ORDER BY post_nr DESC LIMIT ?, ?");
+			$stmt = $this->con->prepare("SELECT post_nr, date, date_updated, author, title, content, keywords FROM sampi_posts ORDER BY post_nr DESC LIMIT ?, ?");
 		}
 		$stmt->bind_param('ii', $offset, $per_page);
 		$stmt->execute();
-		$stmt->bind_result($post_nr, $date, $author, $title, $content, $keywords);
+		$stmt->bind_result($post_nr, $date, $dateUpdated, $author, $title, $content, $keywords);
 		while ( $stmt->fetch() ) {
-			$posts [$post_nr] = new SampiPost( $post_nr, $title, $author, $content, $date, $keywords );
+			$posts [$post_nr] = new SampiPost( $post_nr, $title, $author, $content, $date, $dateUpdated, $keywords );
 		}
 		$stmt->free_result();
 		$stmt->close();
@@ -454,13 +455,13 @@ class SampiDbFunctions {
 	 * Selection based on url parameters.
 	 */
 	function getSinglePost($p) {
-		$stmt = $this->con->prepare( "SELECT post_nr, date, author, title, content, keywords FROM sampi_posts WHERE post_nr=?" );
+		$stmt = $this->con->prepare( "SELECT post_nr, date, date_updated, author, title, content, keywords FROM sampi_posts WHERE post_nr=?" );
 		$stmt->bind_param('i', $p);
 		$stmt->execute();
-		$stmt->bind_result($post_nr, $date, $author, $title, $content, $keywords);
+		$stmt->bind_result($post_nr, $date, $dateUpdated, $author, $title, $content, $keywords);
 		$stmt->store_result();
 		$stmt->fetch();
-		$post = new SampiPost($post_nr, $title, $author, $content, $date, $keywords);
+		$post = new SampiPost($post_nr, $title, $author, $content, $date, $dateUpdated, $keywords);
 		$stmt->free_result();
 		$stmt->close();
 		return $post;
@@ -569,8 +570,13 @@ class SampiDbFunctions {
 		if ($post_nr !== "" && $title !== "" && $content !== "") {
 			if ($this->checkAuth($username, $password)) {
 				$date = date ( 'Y-m-d H:i:s' );
-				$stmt = $this->con->prepare( "UPDATE sampi_posts SET date_updated=?,title=?,content=?,keywords=? WHERE post_nr=?" );
-				$stmt->bind_param('ssssi', $date, $title, $content, $keywords, $post_nr);
+				if ($keywords) {
+					$stmt = $this->con->prepare( "UPDATE sampi_posts SET date_updated=?,title=?,content=?,keywords=? WHERE post_nr=?" );
+					$stmt->bind_param('ssssi', $date, $title, $content, $keywords, $post_nr);
+				} else {
+					$stmt = $this->con->prepare( "UPDATE sampi_posts SET date_updated=?,title=?,content=? WHERE post_nr=?" );
+					$stmt->bind_param('sssi', $date, $title, $content, $post_nr);
+				}
 				$stmt->execute();
 				if ($stmt->affected_rows > 0) {
 					$stmt->free_result();
@@ -754,6 +760,7 @@ class SampiObject {
  */
 class SampiPost {
 	private $date;
+	private $dateUpdated;
 	private $title;
 	private $content;
 	private $nr;
@@ -799,13 +806,14 @@ class SampiPost {
 	 */
 	public static $SHOW_EDIT = 0x3;
 	
-	function __construct($post_nr, $title, $author, $content, $date, $keywords) {
+	function __construct($post_nr, $title, $author, $content, $date, $dateUpdated, $keywords) {
 		$db = new SampiDbFunctions();
 		$this->nr = $post_nr;
 		$this->title = $title;
 		$this->author = $author;
 		$this->content = $content;
 		$this->date = $date;
+		$this->dateUpdated = $dateUpdated;
 		$this->keywords = $keywords;
 		
 		$this->author = $db->getAuthorData($this->author);
@@ -833,6 +841,12 @@ class SampiPost {
 	}
 	public function getISODate() {
 		return date ( DateTime::ISO8601, strtotime ( $this->date ) );
+	}
+	public function getDateUpdated() {
+		return date ( date_format, strtotime ( $this->dateUpdated ) );
+	}
+	public function getISODateUpdated() {
+		return date ( DateTime::ISO8601, strtotime ( $this->dateUpdated ) );
 	}
 	/**
 	 * Gets the number of the post.
