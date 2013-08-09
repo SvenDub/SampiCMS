@@ -9,10 +9,12 @@
  * Start PHPDoc
  */
 $phpdoc;
-if (substr_count ( $_SERVER ['HTTP_ACCEPT_ENCODING'], 'gzip' )) {
-	ob_start ( "ob_gzhandler" );
-} else {
-	ob_start ();
+if (! array_search ( 'ob_gzhandler', ob_list_handlers () )) {
+	if (substr_count ( $_SERVER ['HTTP_ACCEPT_ENCODING'], 'gzip' )) {
+		ob_start ( "ob_gzhandler" );
+	} else {
+		ob_start ();
+	}
 }
 session_start();
 define ( 'ROOT', substr(dirname(__FILE__),0,-12) );

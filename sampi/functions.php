@@ -274,6 +274,7 @@ function sampi_sidebar() {
  * @link https://dev.twitter.com/cards
  * @link http://ogp.me/
  * @link https://plus.google.com/
+ * @link http://schema.org/
  */
 function sampi_integration_meta() {
 	global $p, $db;
@@ -314,7 +315,10 @@ function sampi_integration_meta() {
 			';
 		}
 	} else {
-		// TODO Blogstream meta tags, global user
+		echo '
+			<meta name="description" content="' . substr(strip_tags( sampi_info('description')),0,250) . '" />
+			<meta name="author" content="' . $db->getAuthorData(global_user)['full_name'] . '" />
+		';
 		if ($opengraph) {
 			echo '
 				<meta property="og:title" content="' . sampi_info('title') . '" />
@@ -336,6 +340,20 @@ function sampi_integration_meta() {
 			} elseif (file_exists(ROOT . '/sampi/resources/images/logo_s.png')) {
 				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/sampi/resources/images/logo_s.png" />';
 			}
+		}
+		if ($twitter) {
+			echo '
+				<meta name="twitter:card" content="summary" />
+				<meta name="twitter:site" content="" />
+				<meta name="twitter:title" content="' . sampi_info('title') . '" />
+				<meta name="twitter:description" content="' . substr(strip_tags( sampi_info('description')),0,250) . '" />
+				<meta name="twitter:creator" content="' . $db->getAuthorData(global_user)['twitter_user'] . '" />
+			';
+		}
+		if ($google) {
+			echo '
+				<link href="https://plus.google.com/' . $db->getAuthorData(global_user)['google_plus_user'] . '" rel="author" />
+			';
 		}
 	}
 }
@@ -1077,6 +1095,8 @@ function sampi_admin_auth() {
 			$password = $_POST['login']['password'];
 			if ($db->checkAuth($username, $password)) {
 				session_regenerate_id();
+				$session = session_get_cookie_params();
+				setcookie(session_name(), session_id(), $session['lifetime'], $session['path'], $session['domain'], false, true );
 				$_SESSION['logged_in'] = 1;
 				$_SESSION['username'] = $username;
 			} else {
@@ -1085,11 +1105,15 @@ function sampi_admin_auth() {
 				header ( 'Location: ' . ADMIN_REL_ROOT );
 			}
 		} else {
+			$_SESSION = array();
+			session_destroy();
 			require_once ADMIN_ROOT . '/login.php';
 			die();
 		}
 	} else {
 		session_regenerate_id();
+		$session = session_get_cookie_params();
+		setcookie(session_name(), session_id(), $session['lifetime'], $session['path'], $session['domain'], false, true );
 	}
 }
 

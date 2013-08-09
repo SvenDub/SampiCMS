@@ -15,7 +15,7 @@ $phpdoc;
 	<h1>
 		<a href="<?php echo REL_ROOT; ?>"><?php echo sampi_info('title'); ?></a>
 	</h1>
-	<h2><?php echo sampi_info('description'); ?></h2>
+	<p><?php echo sampi_info('description'); ?><p>
 </div>
 <div id="popup_table" style="display: none; opacity: 1.0;">
 	<div id="popup_cell"></div>

@@ -29,6 +29,10 @@ div#header {
 	margin: 10px;
 }
 
+div#header p {
+	max-width: 75%;
+}
+
 div#sidebarContainer {
 	width: 200px;
 	display: table-cell;
@@ -95,6 +99,15 @@ div[id^="post_"][id$="_header_author"] {
 	background-repeat: no-repeat;
 	padding-left: 16px;
 }
+
+div[id^="post_"][id$="_content"] a {
+	color: #0048FF;
+}
+
+div[id^="post_"][id$="_content"] a:hover {
+	text-decoration: underline;
+}
+
 
 div[id^="post_"][id$="_header_date_updated"] {
 	font-size: 0.9em;
