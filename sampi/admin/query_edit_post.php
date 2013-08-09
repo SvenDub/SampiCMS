@@ -4,7 +4,7 @@ if (substr_count ( $_SERVER ['HTTP_ACCEPT_ENCODING'], 'gzip' )) {
 } else {
 	ob_start ();
 }
-
+session_start();
 define ( 'ROOT', substr(dirname(__FILE__),0,-12) );
 define ( 'REL_ROOT', substr($_SERVER['SCRIPT_NAME'],0,-32) );
 define ( 'ADMIN_ROOT', ROOT . '/sampi/admin' );
@@ -22,10 +22,8 @@ if ($post_nr && $title && $content) {
 		global $db;
 		$db = new SampiAdminDbFunctions();
 		sampi_admin_auth ();
-		$username = $_COOKIE['username'];
-		$password = $_COOKIE['password'];
 		$db->getSettings();
-		$post = $db->editPost($post_nr, $title, $content, $keywords, $username, $password);
+		$post = $db->editPost($post_nr, $title, $content, $keywords);
 		if ($post) {
 			echo 'Post edited!';
 		} else {

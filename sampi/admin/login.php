@@ -14,6 +14,7 @@ if (substr_count ( $_SERVER ['HTTP_ACCEPT_ENCODING'], 'gzip' )) {
 } else {
 	ob_start ();
 }
+session_start();
 define ( 'ROOT', substr(dirname(__FILE__),0,-12) );
 define ( 'REL_ROOT', substr($_SERVER['SCRIPT_NAME'],0,-22) );
 define ( 'ADMIN_ROOT', ROOT . '/sampi/admin' );
@@ -43,7 +44,7 @@ $db->getSettings ();
 		}
 		?>
 		</div>
-		<form name="login" action="" method="post">
+		<form name="login" action="<?php if ($_SERVER['REQUEST_URI'] == ADMIN_REL_ROOT . '/login.php') { echo ADMIN_REL_ROOT;} ?>" method="post">
 			<table>
 				<tr>
 					<td>Username:</td>

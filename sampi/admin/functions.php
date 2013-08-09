@@ -16,7 +16,7 @@ $phpdoc;
  */
 function sampi_admin_init() {
 	global $db;
-
+	
 	$db = new SampiAdminDbFunctions();
 	
 	sampi_admin_auth ();
@@ -25,47 +25,6 @@ function sampi_admin_init() {
 	sampi_admin_header ();
 	sampi_admin_theme ();
 	sampi_admin_footer ();
-}
-
-/**
- * Provides authentication for the administration interface.
- * Uses a connection with the MySQL database to verify the users identity. If the user is not logged in, a loginscreen will show up.
- */
-function sampi_admin_auth() {
-	global $current_user, $db;
-	if (isset ( $_GET ['logout'] )) {
-		setcookie ( 'username', null, time () - 3600, REL_ROOT );
-		setcookie ( 'password', null, time () - 3600, REL_ROOT );
-		header ( 'Location: ' . ADMIN_REL_ROOT );
-	} elseif (! isset ( $_COOKIE ['username'] )) {
-		if (isset ( $_POST ['login'] ['username'] ) && isset ( $_POST ['login'] ['password'] )) {
-			$username = $_POST ['login'] ['username'];
-			$password = $_POST ['login'] ['password'];
-			if ($db->checkAuth($username, $password) !== false) {
-				setcookie ( 'username', $username, time() + 60 * 60 * 24 * 30, REL_ROOT );
-				setcookie ( 'password', $password, time() + 60 * 60 * 24 * 30, REL_ROOT );
-			} else {
-				$error = true;
-				include (ADMIN_ROOT . '/login.php');
-				die ();
-			}
-		} else {
-			include (ADMIN_ROOT . '/login.php');
-			die ();
-		}
-	} else {
-		$username = $_COOKIE ['username'];
-		$password = $_COOKIE ['password'];
-		if ($db->checkAuth($username, $password) !== false) {
-			$current_user = $username;
-		} else {
-			$error = true;
-			setcookie ( 'username', null, time () - 3600 );
-			setcookie ( 'password', null, time () - 3600 );
-			include (ADMIN_ROOT . '/login.php');
-			die ();
-		}
-	}
 }
 
 /**

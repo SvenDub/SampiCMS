@@ -16,7 +16,7 @@ global $db;
 ?>
 <div id="post_<?php echo $this->getNr(); ?>" itemscope itemtype="http://schema.org/Article">
 	<div id="post_<?php echo $this->getNr(); ?>_header">
-		<?php if ($db->checkAuth($_COOKIE['username'], $_COOKIE['password'])) : ?>
+		<?php if ($_SESSION['logged_in']) : ?>
 		<input type="button" class="button-main" id="post_<?php echo $this->getNr(); ?>_header_edit" value="Edit" onclick="window.location.href += '&edit';" />
 		<?php endif; ?>
 		<div id="post_<?php echo $this->getNr(); ?>_header_title" itemprop="name"><?php echo $this->getTitle(); ?></div>

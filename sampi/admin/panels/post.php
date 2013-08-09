@@ -15,6 +15,7 @@ global $db;
 
 $title = '';
 $content = '';
+$keywords = '';
 
 // Save settings
 if (isset ( $_GET ['title'] ) && isset ( $_GET ['content'] )) {
@@ -22,17 +23,14 @@ if (isset ( $_GET ['title'] ) && isset ( $_GET ['content'] )) {
 	$content = $_GET ['content'];
 	$keywords = $_GET ['keywords'];
 	if ($title !== null && $content !== null) {
-		$username = $_COOKIE ['username'];
-		$password = $_COOKIE ['password'];
-		$p = $db->newPost ( $title, $content, $keywords, $username, $password );
+		$p = $db->newPost ( $title, $content, $keywords );
 		if ($p == false) {
 			echo '<span style="color: #F00;">Error while posting post <b>' . $title . '</b>!</span>';
 		} else {
-			echo '<span style="color: #0F0;">Post <b>' . $title . '</b> added!</span>';
+			echo '<span style="color: #0A0;">Post <b>' . $title . '</b> added!</span>';
 			$title = '';
 			$content = '';
-			unset ( $username );
-			unset ( $password );
+			$keywords = '';
 		}
 	}
 }

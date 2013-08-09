@@ -542,10 +542,10 @@ class SampiDbFunctions {
 	 *        	Used in combination with $username to authenticate the poster.
 	 * @return boolean True on success, false on failure
 	 */
-	function newPost($title, $content, $keywords, $username, $password) {
+	function newPost($title, $content, $keywords) {
 		if ($title !== "" && $content !== "") {
-			$author = $this->checkAuth ( $username, $password )['username'];
-			if ($author !== false) {
+			if ($_SESSION['logged_in']) {
+				$author = $_SESSION['username'];
 				$date = date ( 'Y-m-d H:i:s' );
 				$dateUpdated = date ( 'Y-m-d H:i:s' );
 				$stmt = $this->con->prepare( "INSERT INTO sampi_posts (date, date_updated, author, title, content, keywords) VALUES (?, ?, ?, ?, ?, ?)" );
@@ -566,9 +566,9 @@ class SampiDbFunctions {
 		}
 	}
 	
-	function editPost($post_nr, $title, $content, $keywords, $username, $password) {
+	function editPost($post_nr, $title, $content, $keywords) {
 		if ($post_nr !== "" && $title !== "" && $content !== "") {
-			if ($this->checkAuth($username, $password)) {
+			if ($_SESSION['logged_in']) {
 				$date = date ( 'Y-m-d H:i:s' );
 				if ($keywords) {
 					$stmt = $this->con->prepare( "UPDATE sampi_posts SET date_updated=?,title=?,content=?,keywords=? WHERE post_nr=?" );
@@ -719,16 +719,20 @@ class SampiDbFunctions {
 	}
 	
 	function deletePost($post_nr) {
-		$stmt = $this->con->prepare( "DELETE FROM sampi_posts WHERE post_nr = ?" );
-		$stmt->bind_param('i', $post_nr);
-		$stmt->execute();
-		if ($stmt->affected_rows > 0) {
-			$success = true;
-		}
-		$stmt->free_result();
-		$stmt->close();
-		if ($success) {
-			return true;
+		if ($_SESSION ['logged_in']) {
+			$stmt = $this->con->prepare ( "DELETE FROM sampi_posts WHERE post_nr = ?" );
+			$stmt->bind_param ( 'i', $post_nr );
+			$stmt->execute ();
+			if ($stmt->affected_rows > 0) {
+				$success = true;
+			}
+			$stmt->free_result ();
+			$stmt->close ();
+			if ($success) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -1055,4 +1059,38 @@ class SampiStatic {
 		return $this->content;
 	}
 }
+
+/**
+ * Provides authentication for the administration interface.
+ * Uses a connection with the MySQL database to verify the users identity. If the user is not logged in, a loginscreen will show up.
+ */
+function sampi_admin_auth() {
+	global $current_user, $db;
+	session_start();
+	if (isset ( $_GET ['logout'] )) {
+		$_SESSION = array();
+		session_destroy();
+		header ( 'Location: ' . ADMIN_REL_ROOT );
+	} elseif (! isset($_SESSION['logged_in']) || ! $_SESSION['logged_in']) {
+		if (isset ($_POST['login']['username']) && isset($_POST['login']['password'])) {
+			$username = $_POST['login']['username'];
+			$password = $_POST['login']['password'];
+			if ($db->checkAuth($username, $password)) {
+				session_regenerate_id();
+				$_SESSION['logged_in'] = 1;
+				$_SESSION['username'] = $username;
+			} else {
+				$_SESSION = array();
+				session_destroy();
+				header ( 'Location: ' . ADMIN_REL_ROOT );
+			}
+		} else {
+			require_once ADMIN_ROOT . '/login.php';
+			die();
+		}
+	} else {
+		session_regenerate_id();
+	}
+}
+
 ?>
