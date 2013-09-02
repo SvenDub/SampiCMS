@@ -1,0 +1,44 @@
+<FilesMatch "\.(php|log)$">
+	
+	# Deny access to all php scripts and logs 
+	Order Deny,Allow
+	Deny from all
+	
+	# Allow only from localhost
+	Allow from 127.0.0.1
+	Allow from localhost
+	Allow from ::1
+	
+</FilesMatch>
+
+<FilesMatch "index.php">
+	
+	# Allow viewing index.php
+	Order Allow,Deny
+	Allow from all
+	
+</FilesMatch>
+
+<FilesMatch "style.php">
+	
+	# Allow retrieving style
+	Order Allow,Deny
+	Allow from all
+	
+</FilesMatch>
+
+<FilesMatch "^query_\.php$">
+	
+	# Allow querys
+	Order Allow,Deny
+	Allow from all
+	
+</FilesMatch>
+
+<FilesMatch "tmp.php">
+
+	# TMP
+	Order Allow,Deny
+	Allow from all
+
+</FilesMatch>
