@@ -2,8 +2,6 @@ SampiCMS
 ========
 A lightweight Open Source Content Management System written in PHP.
 
-![SampiCMS logo](sampi/resources/images/banner.png)
-
 Usage
 =====
 The current version is not yet ready for use.
