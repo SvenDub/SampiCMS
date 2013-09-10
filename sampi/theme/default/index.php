@@ -1,26 +1,28 @@
 <?php
 /**
  * SampiCMS theme index
- * SampiCMS's default theme
+ *
+ * The theme's entry point. Loads the other theme resources.
  *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Theme\default
+ * @package SampiCMS\Theme\Sampi13
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS\Theme\Sampi13;
+use SampiCMS;
 ?>
 <div id="content">
-	<?php sampi_theme_header(); ?>
+	<?php SampiCMS\theme_header(); ?>
 	<div id="sidebarContainer">
 		<div id="sidebar">
-			<?php sampi_sidebar(); ?>
+			<?php SampiCMS\sidebar(); ?>
 		</div>
 	</div>
 	<div id="posts">
-		<?php sampi_mode_selector(); ?>
-		<?php sampi_pages(); ?>
+		<?php SampiCMS\pages(); ?>
+		<?php SampiCMS\mode_selector(); ?>
 	</div>
 	<div id="footer_push"></div>
 </div>

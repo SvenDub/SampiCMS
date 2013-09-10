@@ -1,21 +1,23 @@
 <?php
 /**
  * SampiCMS theme header
- * SampiCMS's default theme
+ *
+ * Show the header.
  *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Theme\default
+ * @package SampiCMS\Theme\Sampi13
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS\Theme\Sampi13;
+use SampiCMS;
 ?>
 <div id='header'>
 	<h1>
-		<a href="<?php echo REL_ROOT; ?>"><?php echo sampi_info('title'); ?></a>
+		<a href="<?php echo SampiCMS\REL_ROOT; ?>"><?php echo SampiCMS\info('title'); ?></a>
 	</h1>
-	<p><?php echo sampi_info('description'); ?><p>
+	<p><?php echo SampiCMS\info('description'); ?><p>
 </div>
 <div id="popup_table" style="display: none; opacity: 1.0;">
 	<div id="popup_cell"></div>

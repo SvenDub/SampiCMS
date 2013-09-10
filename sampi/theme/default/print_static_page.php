@@ -1,15 +1,17 @@
 <?php
 /**
  * SampiCMS theme print static page
- * SampiCMS's default theme
+ *
+ * Show a static page.
  *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Theme\default
+ * @package SampiCMS\Theme\Sampi13
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS\Theme\Sampi13;
+use SampiCMS;
 ?>
 <div id="static_<?php echo $this->getNr(); ?>">
 	<div id="static_<?php echo $this->getNr(); ?>_header">

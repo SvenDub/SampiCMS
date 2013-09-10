@@ -1,14 +1,15 @@
 <?php
 /**
  * SampiCMS theme sidebar
- * SampiCMS's default theme
+ *
+ * Show the sidebar.
  *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Theme\default
+ * @package SampiCMS\Theme\Sampi13
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS\Theme\Sampi13;
+use SampiCMS;
 ?>
-<?php sampi_per_page_selector(); ?>

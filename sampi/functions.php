@@ -1,17 +1,19 @@
 <?php
 /**
  * SampiCMS functions file.
+ *
  * This file contains almost all functions that are required to run SampiCMS properly.
+ *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
-
+namespace SampiCMS;
+use SampiCMS;
 /**
  * Handles errors.
+ *
  * Does this by logging them and displaying an error-page if it's a fatal error.
  *
  * @param int $code
@@ -21,8 +23,8 @@ $phpdoc;
  * @param boolean $fatal
  *        	Optional argument. 'True' for fatal error.
  */
-function sampi_error($code, $arg = '', $fatal = false) {
-	$log = fopen ( ROOT . '/sampi/error.log', 'a' );
+function error($code, $arg = '', $fatal = false) {
+	$log = fopen ( SampiCMS\ROOT . '/sampi/error.log', 'a' );
 	
 	if ($code == 100) {
 		$err = 'Error contacting database: ' . $arg;
@@ -44,7 +46,7 @@ function sampi_error($code, $arg = '', $fatal = false) {
 	if ($fatal) {
 		fwrite ( $log, '[' . date ( 'Y-m-d H:i:s' ) . '] FATAL! ' . $code . ': ' . $err . "\n" );
 		fclose ( $log );
-		print ('<script type="text/javascript">function go() {window.location.href = "' . REL_ROOT . '?error=' . $code . '";} setTimeout("go()",0);</script>') ;
+		print ('<script type="text/javascript">function go() {window.location.href = "' . SampiCMS\REL_ROOT . '?error=' . $code . '";} setTimeout("go()",0);</script>') ;
 		die ();
 	} else {
 		fwrite ( $log, '[' . date ( 'Y-m-d H:i:s' ) . '] ' . $code . ': ' . $err . "\n" );
@@ -53,59 +55,67 @@ function sampi_error($code, $arg = '', $fatal = false) {
 }
 /**
  * First function called upon start.
+ *
  * Initializes connection with database or displays error page if necessary.
  */
-function sampi_init() {
+function init() {
 	global $db;
+	
 	if (isset ( $_GET ['error'] )) {
-		@include_once (ROOT . '/sampi/error.php');
+		/** Shows error page. */
+		include_once (SampiCMS\ROOT . '/sampi/error.php');
 		die ();
 	}
-	$db = new SampiDbFunctions();
-	sampi_get_params ();
+	
+	$db = new DbFunctions();
+	get_params ();
 	$db->getSettings();
-	sampi_header ();
-	sampi_theme ();
-	sampi_footer ();
+	header ();
+	theme ();
+	footer ();
 }
 
 /**
  * Includes header.
+ *
  * Opens &lt;html&gt;-tag, adds &lt;head&gt;-part and open &lt;body&gt;-tag.
  */
-function sampi_header() {
-	(@include_once (ROOT . '/sampi/header.php')) || sampi_error ( 200, 'header.php', true );
+function header() {
+	include_once (SampiCMS\ROOT . '/sampi/header.php');
 }
 
 /**
  * Includes footer.
+ *
  * Closes &lt;body&gt; and &lt;html&gt;-tags.
  */
-function sampi_footer() {
-	(@include_once (ROOT . '/sampi/footer.php')) || sampi_error ( 200, 'footer.php', true );
+function footer() {
+	include_once (SampiCMS\ROOT . '/sampi/footer.php');
 }
 
 /**
  * Includes theme main file.
  */
-function sampi_theme() {
-	(@include_once (ROOT . '/sampi/theme/' . theme . '/index.php')) || sampi_error ( 201, 'index.php', true );
+function theme() {
+	include_once (SampiCMS\ROOT . '/sampi/theme/' . theme . '/index.php');
 }
 
 /**
  * Includes theme header.
+ *
  * The theme header is the visual top of the page.
  */
-function sampi_theme_header() {
-	(@include_once (ROOT . '/sampi/theme/' . theme . '/header.php')) || sampi_error ( 201, 'header.php', true );
+function theme_header() {
+	include_once (SampiCMS\ROOT . '/sampi/theme/' . theme . '/header.php');
 }
 
 /**
  * Includes theme footer.
+ *
  * The theme footer is the visual bottom of the page.
  */
-function sampi_theme_footer() {
-	(@include_once (ROOT . '/sampi/theme/' . theme . '/footer.php')) || sampi_error ( 201, 'footer.php', true );
+function theme_footer() {
+	include_once (SampiCMS\ROOT . '/sampi/theme/' . theme . '/footer.php');
 }
 
 /**
@@ -115,7 +125,7 @@ function sampi_theme_footer() {
  *        	Required argument. Specifies requested info.
  * @return String with requested info.
  */
-function sampi_info($type) {
+function info($type) {
 	switch ($type) {
 		case 'title':
 			return site_title;
@@ -124,7 +134,7 @@ function sampi_info($type) {
 			return site_description;
 			break;
 		case 'version':
-			return sampi_version;
+			return version;
 			break;
 		case 'window_title':
 			return window_title;
@@ -141,35 +151,38 @@ function sampi_info($type) {
 /**
  * Determines wether to show a single post, the blogstream or a static page.
  */
-function sampi_mode_selector() {
+function mode_selector() {
 	global $p, $db, $s;
-	if ($s !== false) {
+	
+	if ($s !== false) { // Static page?
 		$static = $db->getStaticPage($s);
 		$static->show();
-	} elseif ($p !== false) {
+	} elseif ($p !== false) { // Single post?
 		$post = $db->getSinglePost($p);
 		if ($post->getNr() == null) {
-			$post = new SampiPost(404, 'Error 404, post not found!', null, null, 'The requested post could not be found.', null, null);
-			$post->show(SampiPost::$SHOW_ERROR);
+			$post = new Post(404, 'Error 404, post not found!', null, null, 'The requested post could not be found.', null, null);
+			$post->show(Post::SHOW_ERROR);
 		} elseif (isset($_GET['edit'])) {
-			$post->show(SampiPost::$SHOW_EDIT);
+			$post->show(Post::SHOW_EDIT);
 		} else {
-			$post->show(SampiPost::$SHOW_SINGLE);
+			$post->show(Post::SHOW_SINGLE);
 		}
-	} else {
+	} else { // Blogstream
 		$posts = $db->getPosts();
 		foreach ($posts as $key => $val) {
-			$val->show(SampiPost::$SHOW_MULTIPLE);
+			$val->show(Post::SHOW_MULTIPLE);
 		}
 	}
 }
 
 /**
  * Retrieves parameters from url.
+ *
  * Parameters include the requested page, post or sorting.
  */
-function sampi_get_params() {
+function get_params() {
 	global $page, $per_page, $sort, $p, $s;
+	
 	if (isset ( $_GET ["page"] )) {
 		$page = $_GET ["page"];
 		if ($page < 1) {
@@ -204,68 +217,82 @@ function sampi_get_params() {
 /**
  * Displays selector for current page.
  */
-function sampi_pages() {
-	global $page, $per_page, $con;
-	$all_posts = mysqli_query ( $con, "SELECT COUNT(*) FROM sampi_posts" );
-	list ( $amount ) = mysqli_fetch_row ( $all_posts );
-	@mysqli_free_result ( $all_posts );
+function pages() {
+	global $page, $per_page, $db;
+	
+	$amount = count($db->getAllPosts());
 	$pages = ceil ( $amount / $per_page );
-	if ($pages > 1) {
-		$i = 1;
-		
-		print ("<div class='pages'>") ;
-		
-		if ($page > 1) {
-			print ("<a href='?page=1&amp;per_page=" . $per_page . "'>&lt;&lt;</a> ") ;
-			print ("<a href='?page=" . ($page - 1) . "&amp;per_page=" . $per_page . "'>&lt;</a> ") ;
-		}
-		
-		while ( $i <= $pages ) {
+	if ($pages > 1) : // The posts are split up across multiple pages, so show the selector
+		?>
+<div class="posts-limiter-container">
+	<div class="posts-limiter">
+		<img src="<?php echo SampiCMS\REL_ROOT . '/sampi/theme/' . theme . '/images/nav-arrow-prev.png'; ?>" class="nav-arrow" align="left" width="48px"
+			height="48px" />
+		<form name="posts_limiter" action="?" method="get">
+			Go to page: <select name="page" onchange="javascript:submit();">
+		<?php
+		for ($i = 1; $i <= $amount; $i++ ) {
 			if ($i == $page) {
-				print ("<b>[" . $i . "]</b>") ;
+				echo '<option value="' . $i . '" selected>' . $i . '</option>';
 			} else {
-				print ("<a href='?page=" . $i . "&amp;per_page=" . $per_page . "'>" . $i . "</a>") ;
+				echo '<option value="' . $i . '">' . $i . '</option>';
 			}
-			print (" ") ;
-			$i ++;
 		}
-		
-		if ($page < $pages) {
-			print ("<a href='?page=" . ($page + 1) . "&amp;per_page=" . $per_page . "'>&gt;</a> ") ;
-			print ("<a href='?page=" . $pages . "&amp;per_page=" . $per_page . "'>&gt;&gt;</a> ") ;
+		?>
+		</select>
+		<?php
+		if ($per_page) {
+			echo '<input type="hidden" name="per_page" value="' . $per_page . '" />';
 		}
-		
-		print ("</div>") ;
-	}
+		?>
+		</form>
+		<?php per_page_selector(); ?>
+		<img src="<?php echo SampiCMS\REL_ROOT . '/sampi/theme/' . theme . '/images/nav-arrow-next.png'; ?>" class="nav-arrow" align="right" width="48px"
+			height="48px" />
+	</div>
+</div>
+<?php endif;
 }
 
 /**
  * Displays a selector for the amount of posts to show on a single page.
  */
-function sampi_per_page_selector() {
+function per_page_selector() {
 	global $per_page;
 	
-	$a = explode ( ',', per_page_values );
-	array_push ( $a, $per_page );
-	natsort ( $a );
-	$a = array_unique ( $a );
-	print ("<form id='per_page' method='get' action='?'><select name='per_page' onchange='javascript:submit();'>") ;
-	foreach ( $a as $key => $value ) {
+	$values = explode ( ',', per_page_values ); // Get the values in an array
+	array_push ( $values, $per_page ); // Add the current value to the array
+	natsort ( $values ); // Sort the values
+	$values = array_unique ( $values ); // Remove any duplicate values
+	?>
+<form name="per_page" method="get" action="?">
+	Posts per page: <select name="per_page" onchange="javascript:submit();">
+	<?php
+	foreach ( $values as $key => $value ) {
 		if ($value == $per_page) {
-			print ("<option value='" . $value . "' selected='selected'>" . $value . "</option>") ;
+			echo '<option value="' . $value . '" selected="selected">' . $value . '</option>';
 		} else {
-			print ("<option value='" . $value . "'>" . $value . "</option>") ;
+			echo '<option value="' . $value . '">' . $value . '</option>';
 		}
 	}
-	print ("</select></form>") ;
+	?>
+	</select>
+</form>
+<?php
 }
 
 /**
- * Includes global- and theme-sidebar.
+ * Includes global and theme sidebar.
  */
-function sampi_sidebar() {
-	(@include_once (ROOT . '/sampi/sidebar.php')) || sampi_error ( 200, 'sidebar.php', true );
-	(@include_once (ROOT . '/sampi/theme/' . theme . '/sidebar.php')) || sampi_error ( 201, 'sidebar.php', false );
+function sidebar() {
+	/**
+	 * Include global sidebar.
+	 */
+	include_once (SampiCMS\ROOT . '/sampi/sidebar.php');
+	/**
+	 * Include theme sidebar.
+	 */
+	include_once (SampiCMS\ROOT . '/sampi/theme/' . theme . '/sidebar.php');
 }
 
 /**
@@ -276,83 +303,90 @@ function sampi_sidebar() {
  * @link https://plus.google.com/
  * @link http://schema.org/
  */
-function sampi_integration_meta() {
+function integration_meta() {
 	global $p, $db;
+	
 	$twitter = true;
 	$opengraph = true;
 	$google = true;
-	if ($p) {
+	
+	$user = $db->getGlobalUserData();
+	
+	if ($p) { // Single post
 		$post = $db->getSinglePost($p);
+		// Common tags
 		echo '
 			<meta name="description" content="' . substr(strip_tags( $post->getContent()),0,250) . '" />
-			<meta name="author" content="' . $post->getAuthor(SampiPost::$AUTHOR_FULL_NAME) . '" />
+			<meta name="author" content="' . $post->getAuthor(Post::AUTHOR_FULL_NAME) . '" />
 			<meta name="keywords" content="' . $post->getKeywords() . '" />
 		';
-		if ($twitter) {
+		if ($twitter) { // Twitter specific tags
 			echo '
 				<meta name="twitter:card" content="summary" />
 				<meta name="twitter:site" content="" />
 				<meta name="twitter:title" content="' . $post->getTitle() . '" />
 				<meta name="twitter:description" content="' . substr(strip_tags( $post->getContent()),0,250) . '" />
-				<meta name="twitter:creator" content="' . $post->getAuthor(SampiPost::$AUTHOR_TWITTER) . '" />
+				<meta name="twitter:creator" content="' . $post->getAuthor(Post::AUTHOR_TWITTER) . '" />
 			';
 		}
-		if ($opengraph) {
+		if ($opengraph) { // Open Graph specific tags
 			echo '
 				<meta property="og:title" content="' . $post->getTitle() . '" />
 				<meta property="og:type" content="article" />
 				<meta property="article:published_time" content="' . $post->getISODate() . '" />
 				<meta property="article:modified_time" content="' . $post->getISODateUpdated() . '" />
-				<meta property="article:author" content="http://facebook.com/' . $post->getAuthor(SampiPost::$AUTHOR_FACEBOOK) . '" />
-				<meta property="og:url" content=" http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/?p=' . $post->getNr() .'" />
-				<meta property="og:site_name" content="' . sampi_info('title') . '"	/>
+				<meta property="article:author" content="http://facebook.com/' . $post->getAuthor(Post::AUTHOR_FACEBOOK) . '" />
+				<meta property="og:url" content=" http://' . $_SERVER['HTTP_HOST'] . SampiCMS\REL_ROOT . '/?p=' . $post->getNr() .'" />
+				<meta property="og:site_name" content="' . info('title') . '"	/>
 				<meta property="og:description" content="'. substr(strip_tags( $post->getContent()),0,250).'" />
 			';
 		}
-		if ($google) {
+		if ($google) { // Google specific tags
 			echo '
-				<link href="https://plus.google.com/' . $post->getAuthor(SampiPost::$AUTHOR_GOOGLE_PLUS) . '" rel="author" />
+				<link href="https://plus.google.com/' . $post->getAuthor(Post::AUTHOR_GOOGLE_PLUS) . '" rel="author" />
 			';
 		}
-	} else {
+	} else { // Blogstream
+		// Common tags
 		echo '
-			<meta name="description" content="' . substr(strip_tags( sampi_info('description')),0,250) . '" />
-			<meta name="author" content="' . $db->getAuthorData(global_user)['full_name'] . '" />
+			<meta name="description" content="' . substr(strip_tags( info('description')),0,250) . '" />
+			<meta name="author" content="' . $user->getName() . '" />
 		';
-		if ($opengraph) {
+		if ($opengraph) { // Open Graph specific tags
 			echo '
-				<meta property="og:title" content="' . sampi_info('title') . '" />
+				<meta property="og:title" content="' . info('title') . '" />
 				<meta property="og:type" content="website" />
-				<meta property="og:url" content=" http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/' .'" />
-				<meta property="og:site_name" content="' . sampi_info('title') . '"	/>
-				<meta property="og:description" content="'. sampi_info('description') .'" />
+				<meta property="og:url" content=" http://' . $_SERVER['HTTP_HOST'] . SampiCMS\REL_ROOT . '/' .'" />
+				<meta property="og:site_name" content="' . info('title') . '"	/>
+				<meta property="og:description" content="'. info('description') .'" />
+ 				<meta property="og:author" content="' . $user->getFacebook() . '" />
 			';
-			if (file_exists(ROOT . '/sampi/resources/images/site_logo_l.png')) {
-				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/sampi/resources/images/site_logo_l.png" />';
-			} elseif (file_exists(ROOT . '/sampi/resources/images/site_logo_m.png')) {
-				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/sampi/resources/images/site_logo_m.png" />';
-			} elseif (file_exists(ROOT . '/sampi/resources/images/site_logo_s.png')) {
-				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/sampi/resources/images/site_logo_s.png" />';
-			} elseif (file_exists(ROOT . '/sampi/resources/images/logo_l.png')) {
-				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/sampi/resources/images/logo_l.png" />';
-			} elseif (file_exists(ROOT . '/sampi/resources/images/logo_m.png')) {
-				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/sampi/resources/images/logo_m.png" />';
-			} elseif (file_exists(ROOT . '/sampi/resources/images/logo_s.png')) {
-				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . REL_ROOT . '/sampi/resources/images/logo_s.png" />';
+			if (file_exists(SampiCMS\ROOT . '/sampi/resources/images/site_logo_l.png')) {
+				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . SampiCMS\REL_ROOT . '/sampi/resources/images/site_logo_l.png" />';
+			} elseif (file_exists(SampiCMS\ROOT . '/sampi/resources/images/site_logo_m.png')) {
+				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . SampiCMS\REL_ROOT . '/sampi/resources/images/site_logo_m.png" />';
+			} elseif (file_exists(SampiCMS\ROOT . '/sampi/resources/images/site_logo_s.png')) {
+				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . SampiCMS\REL_ROOT . '/sampi/resources/images/site_logo_s.png" />';
+			} elseif (file_exists(SampiCMS\ROOT . '/sampi/resources/images/logo_l.png')) {
+				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . SampiCMS\REL_ROOT . '/sampi/resources/images/logo_l.png" />';
+			} elseif (file_exists(SampiCMS\ROOT . '/sampi/resources/images/logo_m.png')) {
+				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . SampiCMS\REL_ROOT . '/sampi/resources/images/logo_m.png" />';
+			} elseif (file_exists(SampiCMS\ROOT . '/sampi/resources/images/logo_s.png')) {
+				echo '<meta property="og:image" content="http://' . $_SERVER['HTTP_HOST'] . SampiCMS\REL_ROOT . '/sampi/resources/images/logo_s.png" />';
 			}
 		}
-		if ($twitter) {
+		if ($twitter) { // Twitter specific tags
 			echo '
 				<meta name="twitter:card" content="summary" />
 				<meta name="twitter:site" content="" />
-				<meta name="twitter:title" content="' . sampi_info('title') . '" />
-				<meta name="twitter:description" content="' . substr(strip_tags( sampi_info('description')),0,250) . '" />
-				<meta name="twitter:creator" content="' . $db->getAuthorData(global_user)['twitter_user'] . '" />
+				<meta name="twitter:title" content="' . info('title') . '" />
+				<meta name="twitter:description" content="' . substr(strip_tags( info('description')),0,250) . '" />
+				<meta name="twitter:creator" content="' . $user->getTwitter() . '" />
 			';
 		}
-		if ($google) {
+		if ($google) { // Google specific tags
 			echo '
-				<link href="https://plus.google.com/' . $db->getAuthorData(global_user)['google_plus_user'] . '" rel="author" />
+				<link href="https://plus.google.com/' . $user->getGooglePlus() . '" rel="author" />
 			';
 		}
 	}
@@ -366,23 +400,23 @@ function sampi_integration_meta() {
  * @package SampiCMS
  *
  */
-class SampiDbFunctions {
+class DbFunctions {
 	
 	/**
-	 * Contains mysqli connection
+	 * Contains mysqli connection data.
 	 *
-	 * @var mysqli
+	 * @var \mysqli
 	 */
 	public $con;
 	
 	/**
-	 * Sets up connection to the database.
+	 * Create a new connection to the database.
 	 *
 	 * The values used for the connection originate from the settings file.
 	 */
 	function __construct() {
-		require_once ROOT . '/sampi/settings.php';
-		$this->con = new mysqli ( db_host, db_user, db_pass, db );
+		require_once SampiCMS\ROOT . '/sampi/settings.php';
+		$this->con = new \mysqli ( SampiCMS\db_host, SampiCMS\db_user, SampiCMS\db_pass, SampiCMS\db );
 		if ($this->con->connect_errno) {
 			echo $this->con->connect_error;
 			echo '<br />';
@@ -392,7 +426,7 @@ class SampiDbFunctions {
 	}
 	
 	/**
-	 * Closes connection to the database
+	 * Close connection to the database
 	 */
 	function __destruct() {
 		$this->con->kill($this->con->thread_id);
@@ -400,7 +434,7 @@ class SampiDbFunctions {
 	}
 	
 	/**
-	 * Gets the security key and returns it as a string
+	 * Get the security key and return it as a string
 	 *
 	 * @return string Security key
 	 */
@@ -415,7 +449,7 @@ class SampiDbFunctions {
 	}
 	
 	/**
-	 * Authenticates the user
+	 * Authenticate the user
 	 *
 	 * @param string $username
 	 *        	Username of the user.
@@ -442,11 +476,12 @@ class SampiDbFunctions {
 	}
 	
 	/**
-	 * Fetches posts from the database
+	 * Fetch posts from the database
 	 *
-	 * Returns them as an array with objects.
+	 * Return them as an array with \SampiCMS\Post 's.
 	 *
-	 * @return array Posts
+	 * @return array
+	 * @see \SampiCMS\Post
 	 */
 	function getPosts() {
 		global $page, $per_page, $sort;
@@ -461,7 +496,7 @@ class SampiDbFunctions {
 		$stmt->execute();
 		$stmt->bind_result($post_nr, $date, $dateUpdated, $author, $title, $content, $keywords);
 		while ( $stmt->fetch() ) {
-			$posts [$post_nr] = new SampiPost( $post_nr, $title, $author, $content, $date, $dateUpdated, $keywords );
+			$posts [$post_nr] = new Post( $post_nr, $title, $author, $content, $date, $dateUpdated, $keywords );
 		}
 		$stmt->free_result();
 		$stmt->close();
@@ -469,8 +504,32 @@ class SampiDbFunctions {
 	}
 	
 	/**
-	 * Retrieves post and calls sampi_print_single_post() to display it.
-	 * Selection based on url parameters.
+	 * Fetches posts from the database
+	 *
+	 * Return them as an array with \SampiCMS\Post 's.
+	 *
+	 * @return array
+	 * @see \SampiCMS\Post
+	 */
+	function getAllPosts() {
+		$posts = array ();
+		$stmt = $this->con->prepare("SELECT post_nr, date, date_updated, author, title, content, keywords FROM sampi_posts ORDER BY post_nr ASC");
+		$stmt->execute();
+		$stmt->bind_result($post_nr, $date, $dateUpdated, $author, $title, $content, $keywords);
+		while ( $stmt->fetch() ) {
+			$posts [$post_nr] = new Post( $post_nr, $title, $author, $content, $date, $dateUpdated, $keywords );
+		}
+		$stmt->free_result();
+		$stmt->close();
+		return $posts;
+	}
+	
+	/**
+	 * Retrieve requested post from the database.
+	 *
+	 * @param integer $p The id of the requested post.
+	 * @return \SampiCMS\Post
+	 * @see \SampiCMS\Post
 	 */
 	function getSinglePost($p) {
 		$stmt = $this->con->prepare( "SELECT post_nr, date, date_updated, author, title, content, keywords FROM sampi_posts WHERE post_nr=?" );
@@ -479,30 +538,38 @@ class SampiDbFunctions {
 		$stmt->bind_result($post_nr, $date, $dateUpdated, $author, $title, $content, $keywords);
 		$stmt->store_result();
 		$stmt->fetch();
-		$post = new SampiPost($post_nr, $title, $author, $content, $date, $dateUpdated, $keywords);
+		$post = new Post($post_nr, $title, $author, $content, $date, $dateUpdated, $keywords);
 		$stmt->free_result();
 		$stmt->close();
 		return $post;
 	}
 	
+	/**
+	 * Retrieve requested page from the database.
+	 *
+	 * @param integer $s The id of the requested page.
+	 * @return \SampiCMS\StaticPage
+	 * @see \SampiCMS\StaticPage
+	 */
 	function getStaticPage($s) {
 		$stmt = $this->con->prepare( "SELECT page_nr, title, content FROM sampi_statics WHERE page_nr=?" );
 		$stmt->bind_param('i', $s);
 		$stmt->execute();
 		$stmt->bind_result($page_nr, $title, $content);
 		$stmt->fetch();
-		$static = new SampiStatic($page_nr, $title, $content);
+		$static = new StaticPage($page_nr, $title, $content);
 		$stmt->free_result();
 		$stmt->close();
 		return $static;
 	}
 	
 	/**
-	 * Fetches comments from the database
+	 * Fetch comments from the database
 	 *
-	 * Returns them as an array with objects.
+	 * Return them as an array with \SampiCMS\Comment 's.
 	 *
-	 * @return array Comments
+	 * @return array
+	 * @see \SampiCMS\Comment
 	 */
 	function getComments($p) {
 		$comments = array ();
@@ -512,7 +579,7 @@ class SampiDbFunctions {
 		$stmt->bind_result($comment_nr, $post_nr, $commenter, $comment, $date);
 		$i = 1;
 		while ( $stmt->fetch() ) {
-			$comments [$comment_nr] = new SampiComment( $comment_nr, $post_nr, $commenter, $comment, $date, $i );
+			$comments [$comment_nr] = new Comment( $comment_nr, $post_nr, $commenter, $comment, $date, $i );
 			$i++;
 		}
 		$stmt->free_result();
@@ -521,9 +588,9 @@ class SampiDbFunctions {
 	}
 	
 	/**
-	 * Fetches settings from the database.
+	 * Fetche settings from the database.
 	 *
-	 * Returns them as an array.
+	 * Return them as an array.
 	 *
 	 * @return array Settings
 	 */
@@ -533,20 +600,20 @@ class SampiDbFunctions {
 				'security_key'
 		);
 		$stmt = $this->con->prepare ( "SELECT setting_name, setting_value FROM sampi_settings" );
-		$stmt->execute();
-		$stmt->bind_result($setting, $value);
-		while ( $stmt->fetch() ) {
+		$stmt->execute ();
+		$stmt->bind_result ( $setting, $value );
+		while ( $stmt->fetch () ) {
 			if (! in_array ( $setting, $exclude )) {
 				$settings [$setting] = $value;
 			}
 		}
-		$stmt->free_result();
+		$stmt->free_result ();
 		$stmt->close();
 		return $settings;
 	}
 	
 	/**
-	 * Adds a new post to the database
+	 * Add a new post to the database
 	 *
 	 * @param string $title
 	 *        	Title of the post
@@ -559,6 +626,8 @@ class SampiDbFunctions {
 	 *        	Password of the poster.
 	 *        	Used in combination with $username to authenticate the poster.
 	 * @return boolean True on success, false on failure
+	 *
+	 * @see \SampiCMS\Post
 	 */
 	function newPost($title, $content, $keywords) {
 		if ($title !== "" && $content !== "") {
@@ -584,6 +653,17 @@ class SampiDbFunctions {
 		}
 	}
 	
+	/**
+	 * Edit a post in the database.
+	 *
+	 * @param int $post_nr The id of the post.
+	 * @param string $title The title to set.
+	 * @param string $content The content to set.
+	 * @param string $keywords The keywords to set.
+	 * @return boolean True on success, false on failure
+	 *
+	 * @see \SampiCMS\Post
+	 */
 	function editPost($post_nr, $title, $content, $keywords) {
 		if ($post_nr !== "" && $title !== "" && $content !== "") {
 			if ($_SESSION['logged_in']) {
@@ -600,15 +680,25 @@ class SampiDbFunctions {
 					$stmt->free_result();
 					$stmt->close();
 					return true;
-				} else {
+				}{
 					$stmt->free_result();
 					$stmt->close();
-					return false;
+				false;
 				}
 			}
 		}
 	}
 	
+	/**
+	 * Add a new comment to the database.
+	 *
+	 * @param int $post_nr The id of the post.
+	 * @param string $author The author of the comment.
+	 * @param string $content The content of the comment.
+	 *
+	 * @see \SampiCMS\Post
+	 * @see \SampiCMS\Comment
+	 */
 	function newComment($post_nr, $author, $content) {
 		$date = date ( date_format );
 		$stmt = $this->con->prepare("INSERT INTO sampi_comments (post_nr, commenter, comment, date) VALUES (?, ?, ?, ?)");
@@ -623,6 +713,18 @@ class SampiDbFunctions {
 		$stmt->close();
 	}
 	
+	/**
+	 * Add a new author to the database.
+	 *
+	 * @param string $username Username
+	 * @param string $password Password
+	 * @param string $full_name Full name
+	 * @param string $rights Rights
+	 * @param string $twitter_user Twitter username
+	 * @param string $facebook_user Facebook username
+	 * @param string $google_plus_user Google+ username
+	 * @return boolean True on success, false on failure
+	 */
 	function newAuthor($username, $password, $full_name, $rights, $twitter_user, $facebook_user, $google_plus_user) {
 		$success = false;
 		
@@ -645,6 +747,14 @@ class SampiDbFunctions {
 		}
 	}
 	
+	/**
+	 * Retrieve all data about an user.
+	 *
+	 * Return it as an array with strings.
+	 *
+	 * @param string $username
+	 * @return string[] User details
+	 */
 	function getAuthorData($username) {
 		$author = array();
 		$stmt = $this->con->prepare( "SELECT full_name, username, twitter_user, facebook_user, google_plus_user FROM sampi_users WHERE username=?" );
@@ -657,19 +767,50 @@ class SampiDbFunctions {
 		return $author;
 	}
 	
+	/**
+	 * Retrieve all data about the global user.
+	 *
+	 * @return \SampiCMS\User
+	 */
+	function getGlobalUserData() {
+		$user = global_user;
+		$stmt = $this->con->prepare( "SELECT id, full_name, username, twitter_user, facebook_user, google_plus_user FROM sampi_users WHERE username=?" );
+		$stmt->bind_param('s', $user);
+		$stmt->execute();
+		$stmt->bind_result($id, $full_name, $username, $twitter_user, $facebook_user, $google_plus_user);
+		$stmt->fetch();
+		$stmt->free_result();
+		$stmt->close();
+		return new User($id, $username, $full_name, $twitter_user, $facebook_user, $google_plus_user);
+	}
+	
+	/**
+	 * Retrieve all authors from the database.
+	 *
+	 * Return them as an array with \SampiCMS\User 's.
+	 *
+	 * @return array
+	 * @see \SampiCMS\User
+	 */
 	function getAuthors() {
 		$authors = array();
 		$stmt = $this->con->prepare( "SELECT id, full_name, username, twitter_user, facebook_user, google_plus_user FROM sampi_users" );
 		$stmt->execute();
 		$stmt->bind_result($id, $full_name, $username, $twitter_user, $facebook_user, $google_plus_user);
 		while ($stmt->fetch()) {
-			array_push($authors, new SampiUser($id, $username, $full_name, $twitter_user, $facebook_user, $google_plus_user));
+			array_push($authors, new User($id, $username, $full_name, $twitter_user, $facebook_user, $google_plus_user));
 		}
 		$stmt->free_result();
 		$stmt->close();
 		return $authors;
 	}
 	
+	/**
+	 * Retrieve the amount of comments on a post.
+	 *
+	 * @param int $post The id of the post.
+	 * @return int The amount of comments.
+	 */
 	function getCommentsCount($post) {
 		$stmt = $this->con->prepare( "SELECT COUNT(*) FROM sampi_comments WHERE post_nr = ?" );
 		$stmt->bind_param('i', $post);
@@ -682,7 +823,8 @@ class SampiDbFunctions {
 	}
 	
 	/**
-	 * Retrieves settings from MySQL database.
+	 * Retrieve settings from MySQL database.
+	 *
 	 * Has custom handles for certain settings.
 	 */
 	function getSettings() {
@@ -692,42 +834,48 @@ class SampiDbFunctions {
 		$stmt->bind_result($setting_name, $setting_value);
 		while ( $stmt->fetch()) {
 			if (($setting_name == 'window_title') || ($setting_name == 'admin_window_title')) { // Handle for window_title, admin_window_title splits with '%' delimiter
-				$s = $setting_value;
-				$f = '%';
-				$h = 0;
-				$i = 0;
-				$j = 0;
-				$k = 0;
-				$l = 0;
+				$delimiter = '%';
+				$pointer = 0;
+				$next_is_var = false;
+				$start = 0;
+				$end = 0;
 				$new_setting_value = '';
-				while ( strpos ( $s, $f, $i ) !== false ) {
-					$pos = strpos ( $s, $f, $i );
-					$i = $pos + 1;
-					if ($j == 0) {
-						$k = $pos;
-						$j = 1;
-						if ($h == 0) {
-							$var = substr ( $setting_value, 0, $k );
+				while ( strpos ( $setting_value, $delimiter, $pointer ) !== false ) { // Continue if there is another delimiter
+					$pos = strpos ( $setting_value, $delimiter, $pointer ); // Get the position of the next delimiter
+					if ($next_is_var == false) { // Normal string
+						$end = $pos + 1; // Set the end of the string to the position after the next delimiter
+						if ($pointer == 0) { // Start of unsplit string
+							$var = substr ( $setting_value, 0, $end - 1 ); // Get part of the split string
 						} else {
-							$var = substr ( $setting_value, $l + 1, $k - $l - 1 );
+							$var = substr ( $setting_value, $start, $end - $start ); // Get part of the split string
 						}
-						$new_setting_value = $new_setting_value . $var;
-					} else {
-						$l = $pos;
-						$var = substr ( $setting_value, $k + 1, $l - $k - 1 );
-						$j = 0;
-						$new_setting_value = $new_setting_value . constant ( $var );
+						$new_setting_value = $new_setting_value . $var; // Append part of the split string to the new string
+						$next_is_var = true; // Next part is a variable
+					} else { // Variable string
+						$start = $pos; // Set the start of the string to the position after the next delimiter
+						$var = substr ( $setting_value, $end, $start - $end ); // Get part of the split string
+						$new_setting_value = $new_setting_value . constant ( $var ); // Append value of the split variable to the new string
+						$next_is_var = false; // Next part is a normal string
 					}
-					$h ++;
+					$pointer = $pos + 1; // Set the pointer to the position after the next delimiter
 				}
-				if ($h == 0) {
-					$var = substr ( $setting_value, $l, strlen ( $setting_value ) - $l );
+				if ($pointer == 0) {
+					//$var = substr ( $setting_value, $start, strlen ( $setting_value ) - $start );
+					$new_setting_value = $setting_value; // Just a normal string, do nothing
 				} else {
-					$var = substr ( $setting_value, $l + 1, strlen ( $setting_value ) - $l );
+					$var = substr ( $setting_value, $start + 1, strlen ( $setting_value ) - $start ); // Get the rest of the split string
+					$new_setting_value = $new_setting_value . $var; // Append the rest of the split string to the new string
 				}
-				$new_setting_value = $new_setting_value . $var;
+				/**
+				 * Define the setting as a constant
+				 * @ignore
+				 */
 				define ( $setting_name, $new_setting_value );
 			} else { // Normal handle
+				/**
+				 * Define the setting as a constant
+				 * @ignore
+				 */
 				define ( $setting_name, $setting_value );
 			}
 		}
@@ -736,6 +884,12 @@ class SampiDbFunctions {
 		unset ( $settings, $setting_name, $setting_value );
 	}
 	
+	/**
+	 * Delete a post from the database.
+	 *
+	 * @param int $post_nr The id of the post.
+	 * @return boolean True on success, false on failure.
+	 */
 	function deletePost($post_nr) {
 		if ($_SESSION ['logged_in']) {
 			$stmt = $this->con->prepare ( "DELETE FROM sampi_posts WHERE post_nr = ?" );
@@ -759,93 +913,130 @@ class SampiDbFunctions {
 }
 
 /**
- * Provides basic functionality for all Sampi objects.
- * Sampi objects include posts, comments and widgets.
- *
- * @author Sven Dubbeld
- * @package SampiCMS
- */
-class SampiObject {
-	private $author;
-	private $content;
-	/**
-	 * Gets the author of the object.
-	 *
-	 * @return string Author
-	 */
-	public function getAuthor() {
-		return self::author;
-	}
-	/**
-	 * Gets the content the object.
-	 *
-	 * @return string Content
-	 */
-	public function getContent() {
-		return $this->content;
-	}
-	function __construct($author, $content) {
-		$this->author = $author;
-		$this->content = $content;
-	}
-}
-
-/**
  * Provides all functionality for displaying posts.
  *
- * @author Sven Dubbeld
+ * @name SampiCMS Post
+ * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
  * @package SampiCMS
  */
-class SampiPost {
-	private $date;
+class Post {
+	/**
+	 * Date.
+	 * @var string
+	 */
+	 private $date;
+	/**
+	 * Date last updated.
+	 * @var string
+	 */
 	private $dateUpdated;
+	/**
+	 * Title.
+	 * @var string
+	 */
 	private $title;
+	/**
+	 * Content
+	 * @var string
+	 */
 	private $content;
-	private $nr;
-	private $comments;
-	private $commentsCount;
+	/**
+	 * Author
+	 * @var string
+	 */
 	private $author;
+	/**
+	 * Keywords
+	 * @var string
+	 */
 	private $keywords;
+	/**
+	 * Id.
+	 * @var int
+	 */
+	private $nr;
+	/**
+	 * Amount of comments
+	 * @var int
+	 */
+	private $commentsCount;
+	/**
+	 * Comments.
+	 *
+	 * Array containting \SampiCMS\Comment 's.
+	 *
+	 * @var array
+	 */
+	private $comments;
 	
 	/**
+	 * Full name.
+	 *
 	 * @var string
 	 */
-	public static $AUTHOR_FULL_NAME = 'full_name';
+	CONST AUTHOR_FULL_NAME = 'full_name';
 	/**
+	 * Username.
+	 *
 	 * @var string
 	 */
-	public static $AUTHOR_USERNAME = 'username';
+	CONST AUTHOR_USERNAME = 'username';
 	/**
+	 * Twitter username (without @).
+	 *
 	 * @var string
 	 */
-	public static $AUTHOR_TWITTER = 'twitter_username';
+	CONST AUTHOR_TWITTER = 'twitter_username';
 	/**
+	 * Facebook username.
+	 *
 	 * @var string
 	 */
-	public static $AUTHOR_FACEBOOK = 'facebook_username';
+	CONST AUTHOR_FACEBOOK = 'facebook_username';
 	/**
+	 * Google+ username.
+	 *
 	 * @var string
 	 */
-	public static $AUTHOR_GOOGLE_PLUS = 'google_plus_user';
+	CONST AUTHOR_GOOGLE_PLUS = 'google_plus_user';
 	/**
+	 * Show as single post.
+	 *
 	 * @var int
 	 */
-	public static $SHOW_SINGLE = 0x0;
+	CONST SHOW_SINGLE = 0x0;
 	/**
+	 * Show as blogstream post.
+	 *
 	 * @var int
 	 */
-	public static $SHOW_MULTIPLE = 0x1;
+	CONST SHOW_MULTIPLE = 0x1;
 	/**
+	 * Show as error page.
+	 *
 	 * @var int
 	 */
-	public static $SHOW_ERROR = 0x2;
+	CONST SHOW_ERROR = 0x2;
 	/**
+	 * Show in editor.
+	 *
 	 * @var int
 	 */
-	public static $SHOW_EDIT = 0x3;
+	CONST SHOW_EDIT = 0x3;
 	
+	/**
+	 * Create a new instance of a post to interact with.
+	 *
+	 * @param int $post_nr
+	 * @param string $title
+	 * @param string $author
+	 * @param string $content
+	 * @param string $date
+	 * @param string $dateUpdated
+	 * @param string $keywords
+	 */
 	function __construct($post_nr, $title, $author, $content, $date, $dateUpdated, $keywords) {
-		$db = new SampiDbFunctions();
+		$db = new DbFunctions();
 		$this->nr = $post_nr;
 		$this->title = $title;
 		$this->author = $author;
@@ -862,7 +1053,7 @@ class SampiPost {
 	}
 	
 	/**
-	 * Gets the title of the post.
+	 * Get the title of the post.
 	 *
 	 * @return string Title
 	 */
@@ -870,24 +1061,39 @@ class SampiPost {
 		return $this->title;
 	}
 	/**
-	 * Gets the date and converts it to global date-time format.
+	 * Get the date and convert it to the prefered format.
 	 *
 	 * @return string Date
 	 */
 	public function getDate() {
 		return date ( date_format, strtotime ( $this->date ) );
 	}
+	/**
+	 * Get the date and convert it to the default ISO8601 format.
+	 *
+	 * @return string Date
+	 */
 	public function getISODate() {
-		return date ( DateTime::ISO8601, strtotime ( $this->date ) );
+		return date ( \DateTime::ISO8601, strtotime ( $this->date ) );
 	}
+	/**
+	 * Get the date the post is last updated and convert it to the prefered format.
+	 *
+	 * @return string Date
+	 */
 	public function getDateUpdated() {
 		return date ( date_format, strtotime ( $this->dateUpdated ) );
 	}
+	/**
+	 * Get the date the post is last updated and convert it to the default ISO8601 format.
+	 *
+	 * @return string Date
+	 */
 	public function getISODateUpdated() {
-		return date ( DateTime::ISO8601, strtotime ( $this->dateUpdated ) );
+		return date ( \DateTime::ISO8601, strtotime ( $this->dateUpdated ) );
 	}
 	/**
-	 * Gets the number of the post.
+	 * Get the number of the post.
 	 *
 	 * @return integer Number
 	 */
@@ -895,60 +1101,79 @@ class SampiPost {
 		return $this->nr;
 	}
 	/**
-	 * Gets the author of the post.
+	 * Get the author of the post.
 	 *
 	 * @param string $type Optional argument. Specifies requested info.
 	 * <p>
 	 * Possible values:<br />
-	 * SampiPost::AUTHOR_FULL_NAME - Full name<br />
-	 * SampiPost::AUTHOR_USERNAME - Username<br />
-	 * SampiPost::AUTHOR_TWITTER - Twitter username without @<br />
-	 * SampiPost::AUTHOR_FACEBOOK - Facebook username<br />
-	 * SampiPost::AUTHOR_GOOGLE_PLUS - Google+ account number<br />
+	 * Post::AUTHOR_FULL_NAME - Full name (default)<br />
+	 * Post::AUTHOR_USERNAME - Username<br />
+	 * Post::AUTHOR_TWITTER - Twitter username without @<br />
+	 * Post::AUTHOR_FACEBOOK - Facebook username<br />
+	 * Post::AUTHOR_GOOGLE_PLUS - Google+ account number<br />
 	 * </p>
 	 *
 	 * @return string Author
-	 *
-	 * @see SampiObject::getAuthor()
 	 */
 	public function getAuthor($type = self::AUTHOR_FULL_NAME) {
 		return $this->author[$type];
 	}
 	/**
-	 * Gets the number of comments on the current post.
+	 * Get the number of comments on the current post.
 	 *
-	 * @return Number of comments
+	 * @return int Number of comments
 	 */
 	public function getCommentsCount() {
 		return $this->commentsCount;
 	}
+	/**
+	 * Show the post.
+	 *
+	 * @param int $mode
+	 */
 	public function show($mode) {
 		switch ($mode) {
-			case self::$SHOW_SINGLE :
-				include ROOT . '/sampi/theme/' . theme . '/print_single_post.php';
+			case self::SHOW_SINGLE :
+				include SampiCMS\ROOT . '/sampi/theme/' . theme . '/print_single_post.php';
 				break;
-			case self::$SHOW_MULTIPLE :
-				include ROOT . '/sampi/theme/' . theme . '/print_post.php';
+			case self::SHOW_MULTIPLE :
+				include SampiCMS\ROOT . '/sampi/theme/' . theme . '/print_post.php';
 				break;
-			case self::$SHOW_ERROR :
-				include ROOT . '/sampi/theme/' . theme . '/print_error_post.php';
+			case self::SHOW_ERROR :
+				include SampiCMS\ROOT . '/sampi/theme/' . theme . '/print_error_post.php';
 				break;
-			case self::$SHOW_EDIT :
-				include ROOT . '/sampi/theme/' . theme . '/edit_single_post.php';
+			case self::SHOW_EDIT :
+				include SampiCMS\ROOT . '/sampi/theme/' . theme . '/edit_single_post.php';
 				break;
 		}
 	}
+	/**
+	 * Get the content of the post.
+	 *
+	 * @return string
+	 */
 	public function getContent() {
 		return $this->content;
 	}
+	/**
+	 * Show a form to post a comment.
+	 */
 	public function showCommentsForm() {
-		include ROOT . '/sampi/theme/' . theme . '/comment_form.php';
+		include SampiCMS\ROOT . '/sampi/theme/' . theme . '/comment_form.php';
 	}
-	public function getComments() {
+	/**
+	 * Show all comments on a post.
+	 */
+	public function showComments() {
 		foreach ($this->comments as $key => $val) {
 			$val->show();
 		}
 	}
+	/**
+	 * Get the keywords of the post.
+	 *
+	 * @return string
+	 */
 	public function getKeywords() {
 		return $this->keywords;
 	}
@@ -957,17 +1182,52 @@ class SampiPost {
 /**
  * Provides all functionality for displaying comments.
  *
+ * @name SampiCMS Comment
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
  * @package SampiCMS
  */
-class SampiComment {
+class Comment {
+	/**
+	 * Id.
+	 * @var int
+	 */
 	private $comment_nr;
+	/**
+	 * Id of parent post.
+	 * @var int
+	 */
 	private $post_nr;
-	private $commenter;
-	private $comment;
-	private $date;
+	/**
+	 * Number of the comment in the row.
+	 * @var int
+	 */
 	private $order_nr;
+	/**
+	 * Commenter.
+	 * @var string
+	 */
+	private $commenter;
+	/**
+	 * Content.
+	 * @var string
+	 */
+	private $comment;
+	/**
+	 * Date.
+	 * @var string
+	 */
+	private $date;
 	
+	/**
+	 * Create a new instance of a comment to interact with.
+	 *
+	 * @param int $comment_nr
+	 * @param int $post_nr
+	 * @param string $commenter
+	 * @param string $comment
+	 * @param string $date
+	 * @param int $order_nr
+	 */
 	function __construct( $comment_nr, $post_nr, $commenter, $comment, $date, $order_nr ) {
 		$this->comment_nr = $comment_nr;
 		$this->post_nr = $post_nr;
@@ -977,51 +1237,124 @@ class SampiComment {
 		$this->order_nr = $order_nr;
 	}
 	
+	/**
+	 * Get the number of the comment in the row.
+	 *
+	 * @return int
+	 */
 	public function getNr() {
 		return $this->order_nr;
 	}
 	
+	/**
+	 * Get the id of the comment.
+	 *
+	 * @return int
+	 */
 	public function getCommentNr() {
 		return $this->comment_nr;
 	}
 	
+	/**
+	 * Get the id of the parent post.
+	 *
+	 * @return int
+	 */
 	public function getPostNr() {
 		return $this->post_nr;
 	}
 	
+	/**
+	 * Get the author of the comment.
+	 *
+	 * @return string
+	 */
 	public function getAuthor() {
 		return $this->commenter;
 	}
 	
+	/**
+	 * Get the content of the comment.
+	 *
+	 * @return string
+	 */
 	public function getContent() {
 		return $this->comment;
 	}
-	
+	/**
+	 * Get the date and convert it to the prefered format.
+	 *
+	 * @return string Date
+	 */
 	public function getDate() {
 		return date ( date_format, strtotime ( $this->date ) );
 	}
+	/**
+	 * Get the date and convert it to the default ISO8601 format.
+	 *
+	 * @return string Date
+	 */
 	public function getISODate() {
-		return date ( DateTime::ISO8601, strtotime ( $this->date ) );
+		return date ( \DateTime::ISO8601, strtotime ( $this->date ) );
 	}
 	
+	/**
+	 * Show the comment.
+	 */
 	public function show() {
-		include ROOT . '/sampi/theme/' . theme . '/print_comment.php';
+		include SampiCMS\ROOT . '/sampi/theme/' . theme . '/print_comment.php';
 	}
 }
 
 /**
  * Provides all functionality for users.
  *
+ * @name SampiCMS User
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
  * @package SampiCMS
  */
-class SampiUser {
+class User {
+	/**
+	 * Id.
+	 * @var int
+	 */
 	private $id;
+	/**
+	 * Username.
+	 * @var string
+	 */
 	private $username;
+	/**
+	 * Full name.
+	 * @var string
+	 */
 	private $full_name;
+	/**
+	 * Twitter username (without @).
+	 * @var string
+	 */
 	private $twitter_user;
+	/**
+	 * Facebook username.
+	 * @var string
+	 */
 	private $facebook_user;
+	/**
+	 * Google+ username.
+	 * @var string
+	 */
 	private $google_plus_user;
+	
+	/**
+	 * Create a new instance of an user to interact with.
+	 *
+	 * @param int $id
+	 * @param string $username
+	 * @param string $full_name
+	 * @param string $twitter_user
+	 * @param string $facebook_user
+	 * @param string $google_plus_user
+	 */
 	function __construct( $id, $username, $full_name, $twitter_user = NULL, $facebook_user = NULL, $google_plus_user = NULL ) {
 		$this->id = $id;
 		$this->username = $username;
@@ -1030,21 +1363,51 @@ class SampiUser {
 		$this->facebook_user = $facebook_user;
 		$this->google_plus_user= $google_plus_user;
 	}
+	/**
+	 * Get the id of the user.
+	 *
+	 * @return int
+	 */
 	public function getId() {
 		return $this->id;
 	}
+	/**
+	 * Get the username of the user.
+	 *
+	 * @return string
+	 */
 	public function getUsername() {
 		return $this->username;
 	}
+	/**
+	 * Get the full name of the user.
+	 *
+	 * @return string
+	 */
 	public function getName() {
 		return $this->full_name;
 	}
+	/**
+	 * Get the Twitter username (without @) of the user.
+	 *
+	 * @return string
+	 */
 	public function getTwitter() {
 		return $this->twitter_user;
 	}
+	/**
+	 * Get the Facebook username of the user.
+	 *
+	 * @return string
+	 */
 	public function getFacebook() {
 		return $this->facebook_user;
 	}
+	/**
+	 * Get the Google+ username of the user.
+	 *
+	 * @return string
+	 */
 	public function getGooglePlus() {
 		return $this->google_plus_user;
 	}
@@ -1052,27 +1415,65 @@ class SampiUser {
 /**
  * Provides all functionality for displaying static pages.
  *
+ * @name SampiCMS Static Page
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
  * @package SampiCMS
  */
-class SampiStatic {
+class StaticPage {
+	/**
+	 * Id.
+	 * @var int
+	 */
 	private $nr;
+	/**
+	 * Title.
+	 * @var string
+	 */
 	private $title;
+	/**
+	 * Content.
+	 * @var string
+	 */
 	private $content;
+	/**
+	 * Create a new instance of a static page to interact with.
+	 *
+	 * @param int $page_nr
+	 * @param string $title
+	 * @param string $content
+	 */
 	function __construct( $page_nr, $title, $content ) {
 		$this->nr = $page_nr;
 		$this->title = $title;
 		$this->content = $content;
 	}
+	/**
+	 * Show the page.
+	 */
 	public function show() {
-		include ROOT . '/sampi/theme/' . theme . '/print_static_page.php';
+		include SampiCMS\ROOT . '/sampi/theme/' . theme . '/print_static_page.php';
 	}
+	/**
+	 * Get the id of the page.
+	 *
+	 * @return int
+	 */
 	public function getNr() {
 		return $this->nr;
 	}
+	/**
+	 * Get the title of the page.
+	 *
+	 * @return string
+	 */
 	public function getTitle() {
 		return $this->title;
 	}
+	/**
+	 * Get the content of the page.
+	 *
+	 * @return string
+	 */
 	public function getContent() {
 		return $this->content;
 	}
@@ -1080,37 +1481,42 @@ class SampiStatic {
 
 /**
  * Provides authentication for the administration interface.
- * Uses a connection with the MySQL database to verify the users identity. If the user is not logged in, a loginscreen will show up.
+ *
+ * Uses a connection with the MySQL database to verify the users identity.
+ * If the user is not logged in, a loginscreen will show up.
  */
-function sampi_admin_auth() {
+function admin_auth() {
 	global $current_user, $db;
 	session_start();
-	if (isset ( $_GET ['logout'] )) {
+	if (isset ( $_GET ['logout'] )) { // Logout the user
 		$_SESSION = array();
 		session_destroy();
-		header ( 'Location: ' . ADMIN_REL_ROOT );
-	} elseif (! isset($_SESSION['logged_in']) || ! $_SESSION['logged_in']) {
-		if (isset ($_POST['login']['username']) && isset($_POST['login']['password'])) {
+		\header ( 'Location: ' . SampiCMS\ADMIN_REL_ROOT );
+	} elseif (! isset($_SESSION['logged_in']) || ! $_SESSION['logged_in']) { // User is not logged in
+		if (isset ($_POST['login']['username']) && isset($_POST['login']['password'])) { // Login data found
 			$username = $_POST['login']['username'];
 			$password = $_POST['login']['password'];
-			if ($db->checkAuth($username, $password)) {
+			if ($db->checkAuth($username, $password)) { // Check login data
+				// OK!
 				session_regenerate_id();
 				$session = session_get_cookie_params();
 				setcookie(session_name(), session_id(), $session['lifetime'], $session['path'], $session['domain'], false, true );
 				$_SESSION['logged_in'] = 1;
 				$_SESSION['username'] = $username;
 			} else {
+				// Redirect to login page
 				$_SESSION = array();
 				session_destroy();
-				header ( 'Location: ' . ADMIN_REL_ROOT );
+				\header ( 'Location: ' . SampiCMS\ADMIN_REL_ROOT );
 			}
-		} else {
+		} else { // No login data found, redirect to login page
 			$_SESSION = array();
 			session_destroy();
-			require_once ADMIN_ROOT . '/login.php';
+			require_once SampiCMS\ADMIN_ROOT . '/login.php';
 			die();
 		}
 	} else {
+		// User is logged in, refresh to session for security's sake
 		session_regenerate_id();
 		$session = session_get_cookie_params();
 		setcookie(session_name(), session_id(), $session['lifetime'], $session['path'], $session['domain'], false, true );

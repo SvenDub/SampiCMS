@@ -1,25 +1,60 @@
 <?php
+
 /**
  * SampiCMS mobile API
+ *
  * Handles requests for the mobile app.
+ *
+ * <p>
+ * The app sends a tag with it's POST request.
+ * The tag gets processed, the associated action is executed and the result gets returned as a JSON encoded string.
+ * </p>
+ *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Admin\MobileAPI
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
-define ( 'ROOT', substr(dirname(__FILE__),0,-22) );
-define ( 'REL_ROOT', substr($_SERVER['SCRIPT_NAME'],0,-32) );
-define ( 'ADMIN_ROOT', ROOT . '/sampi/admin' );
-define ( 'ADMIN_REL_ROOT', REL_ROOT . '/sampi/admin' );
-define ( 'API_ROOT', ADMIN_ROOT . '/mobileapi' );
-define ( 'API_REL_ROOT', ADMIN_REL_ROOT . '/mobileapi' );
+namespace SampiCMS\Admin\MobileAPI;
+use SampiCMS;
+use SampiCMS\Admin;
 
-require_once 'SampiMobileDbFunctions.php';
-$db = new SampiMobileDbFunctions ();
+/**
+ * Absolute path to the root of SampiCMS.
+ * @ignore
+ */
+define ( 'SampiCMS\ROOT', substr ( dirname ( __FILE__ ), 0, - 22 ) );
+/**
+ * Relative (web) path to the root of SampiCMS.
+ * @ignore
+ */
+define ( 'SampiCMS\REL_ROOT', substr ( $_SERVER ['SCRIPT_NAME'], 0, - 32 ) );
+/**
+ * Absolute path to the admin root.
+ * @ignore
+ */
+define ( 'SampiCMS\ADMIN_ROOT', SampiCMS\ROOT . '/sampi/admin' );
+/**
+ * Relative (web) path to the root of SampiCMS.
+ * @ignore
+ */
+define ( 'SampiCMS\ADMIN_REL_ROOT', SampiCMS\REL_ROOT . '/sampi/admin' );
+/**
+ * Absolute path to the mobile API root.
+ * @ignore
+ */
+define ( 'SampiCMS\API_ROOT', SampiCMS\ADMIN_ROOT . '/mobileapi' );
+/**
+ * Relative (web) path to the mobile API root.
+ * @ignore
+ */
+define ( 'SampiCMS\API_REL_ROOT', SampiCMS\ADMIN_REL_ROOT . '/mobileapi' );
 
-$db->getSettings();
+require_once 'DbFunctions.php';
+
+$db = new DbFunctions ();
+
+$db->getSettings ();
 
 if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 	$tag = $_POST ['tag'];
@@ -37,7 +72,7 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 	$user = $db->checkAuth ( $username, $password );
 	
 	switch ($tag) {
-		case 'login' :
+		case 'login' : // User logs in
 			if ($user != false) {
 				$response ['success'] = 1;
 				$response ['user'] ['id'] = $user ['id'];
@@ -53,7 +88,7 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 				echo json_encode ( $response );
 			}
 			break;
-		case 'new_post' :
+		case 'new_post' : // User adds a post
 			if ($user != false) {
 				$title = @$_POST ['title'];
 				$content = @$_POST ['content'];
@@ -71,7 +106,7 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 				echo json_encode ( $response );
 			}
 			break;
-		case 'settings' :
+		case 'settings' : // User fetches settings
 			if ($user != false) {
 				$settings = $db->returnSettings ();
 				$response ['success'] = 1;
@@ -85,16 +120,16 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 				echo json_encode ( $response );
 			}
 			break;
-		case 'fetch_posts' :
+		case 'fetch_posts' : // User fetches posts
 			if ($user != false) {
-				$posts = $db->getPosts ();
+				$posts = $db->getAllPosts ();
 				$response ['success'] = 1;
 				foreach ( $posts as $key => $val ) {
-					$response ['posts'] [$val->getNr()] ['post_nr'] = $val->getNr();
-					$response ['posts'] [$val->getNr()] ['date'] = $val->getDate();
-					$response ['posts'] [$val->getNr()] ['author'] = $val->getAuthor(SampiPost::$AUTHOR_USERNAME);
-					$response ['posts'] [$val->getNr()] ['title'] = $val->getTitle();
-					$response ['posts'] [$val->getNr()] ['content'] = $val->getContent();
+					$response ['posts'] [$val->getNr ()] ['post_nr'] = $val->getNr ();
+					$response ['posts'] [$val->getNr ()] ['date'] = $val->getDate ();
+					$response ['posts'] [$val->getNr ()] ['author'] = $val->getAuthor ( SampiCMS\Post::AUTHOR_USERNAME );
+					$response ['posts'] [$val->getNr ()] ['title'] = $val->getTitle ();
+					$response ['posts'] [$val->getNr ()] ['content'] = $val->getContent ();
 				}
 				echo json_encode ( $response );
 			} else {
@@ -103,7 +138,7 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 				echo json_encode ( $response );
 			}
 			break;
-		case 'fetch_authors' :
+		case 'fetch_authors' : // User fetches authors
 			if ($user != false) {
 				$authors = $db->getAuthors ();
 				$response ['success'] = 1;
@@ -120,7 +155,7 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 				echo json_encode ( $response );
 			}
 			break;
-		default :
+		default : // User sends unknown request
 			$response ['error'] = 1;
 			$response ['error_msg'] = 'Invalid Request';
 			echo json_encode ( $response );

@@ -271,3 +271,27 @@ div[id^="static_"][id$="_footer"] {
 	color: #AAAAAA;
 	font-size: 0.9em;
 }
+
+div.posts-limiter-container {
+	background-color: #FFFFFF;
+	margin: 10px;
+	margin-top: 0px;
+	padding: 10px;
+	box-shadow: 2px 2px 2px #C8C8C8;
+	border-radius: 2px;
+	height: 48px;
+	line-height: 48px;
+}
+
+div.posts-limiter {
+	width: 100%;
+	text-align: center;
+}
+
+form[name="per_page"], form[name="posts_limiter"] {
+	display: inline;
+}
+
+img.nav-arrow {
+	vertical-align: middle;
+}

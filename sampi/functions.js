@@ -1,17 +1,25 @@
 /**
- * SampiCMS functions file. This file contains almost all functions that are
+ * SampiCMS functions file.
+ * 
+ * This file contains almost all functions that are
  * required to run SampiCMS properly.
  * 
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS
  */
 var REL_ROOT;
 var ADMIN_REL_ROOT;
+/**
+ * Get the relative (web) roots of SampiCMS and the admin interface.
+ */
 window.onload = function() {
     REL_ROOT = document.getElementsByName("REL_ROOT")[0].content;
     ADMIN_REL_ROOT = document.getElementsByName("ADMIN_REL_ROOT")[0].content;
 };
 
+/**
+ * Adds a new comment to the database.
+ * @returns {Boolean}
+ */
 function postComment() {
     var post_nr = document.getElementById("comment_post_form_post_nr").value;
     var author = document.getElementById("comment_post_form_author").value;
@@ -39,9 +47,18 @@ function postComment() {
     xmlhttp.send(); // Send HttpRequest
     return false;
 }
-
+/**
+ * Stores the opacity of the popup.
+ * @var {float}
+ */
 var popup_opacity = 1;
 
+/**
+ * Show the comments of a post.
+ * 
+ * @param post_nr {Int} The post
+ * @returns {Boolean}
+ */
 function showComments(post_nr) {
     // Create HttpRequest
     var xmlhttp;
@@ -66,6 +83,10 @@ function showComments(post_nr) {
     return false;
 }
 
+/**
+ * Show a popup.
+ * @param msg {String} The message to show 
+ */
 function showPopup(msg) {
     document.getElementById('popup_cell').innerHTML = msg;
     document.getElementById('popup_table').style.opacity = popup_opacity;
@@ -75,6 +96,9 @@ function showPopup(msg) {
     setTimeout('hidePopup()', 2000);
 }
 
+/**
+ * Fade out the popup and hide it.
+ */
 function hidePopup() {
     if (popup_opacity > 0.1) {
 	document.getElementById('popup_table').style.opacity = popup_opacity;
@@ -88,6 +112,12 @@ function hidePopup() {
     }
 }
 
+/**
+ * Delete a post from the database.
+ * 
+ * @param post_nr {Int} The post to delete
+ * @returns {Boolean}
+ */
 function deletePost(post_nr) {
     var confirmed = window
 	    .confirm('Are you sure you want to delete this post?\nThis cannot be undone!');
@@ -118,6 +148,14 @@ function deletePost(post_nr) {
     }
 }
 
+/**
+ * Edit a post.
+ * 
+ * The fields for the posts are automatically retrieved from the HTML.
+ * 
+ * @param post_nr {Int} The post to edit
+ * @returns {Boolean}
+ */
 function editPost(post_nr) {
     var title = document.getElementById("post_" + post_nr + "_header_title").innerHTML;
     var content = document.getElementById("post_" + post_nr + "_content").innerHTML;
@@ -145,13 +183,4 @@ function editPost(post_nr) {
 	    + "&keywords=" + keywords, true);
     xmlhttp.send(); // Send HttpRequest
     return false;
-}
-
-function getUrlVars() {
-    var map = {};
-    var parts = window.location.search.replace(/[?&]+([^=&]+)(=[^&]*)?/gi,
-	    function(m, key, value) {
-		map[key] = (value === undefined) ? true : value.substring(1);
-	    });
-    return map;
 }

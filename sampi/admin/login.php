@@ -1,14 +1,18 @@
 <?php
+
 /**
  * SampiCMS admin login page
+ *
  * Provides login page for the admin interface
+ *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Admin
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS\Admin;
+use SampiCMS;
+// Use gzip for improved speeds, if available and not already used
 if (! array_search ( 'ob_gzhandler', ob_list_handlers () )) {
 	if (substr_count ( $_SERVER ['HTTP_ACCEPT_ENCODING'], 'gzip' )) {
 		ob_start ( "ob_gzhandler" );
@@ -16,23 +20,48 @@ if (! array_search ( 'ob_gzhandler', ob_list_handlers () )) {
 		ob_start ();
 	}
 }
-session_start();
-define ( 'ROOT', substr(dirname(__FILE__),0,-12) );
-define ( 'REL_ROOT', substr($_SERVER['SCRIPT_NAME'],0,-22) );
-define ( 'ADMIN_ROOT', ROOT . '/sampi/admin' );
-define ( 'ADMIN_REL_ROOT', REL_ROOT . '/sampi/admin' );
-require_once ROOT . '/sampi/settings.php';
-require_once ROOT . '/sampi/functions.php';
-require_once ADMIN_ROOT . '/functions.php';
-$db = new SampiAdminDbFunctions ();
+session_start ();
+/**
+ * Absolute path to the root of SampiCMS.
+ *
+ * @ignore
+ *
+ */
+define ( 'ROOT', substr ( dirname ( __FILE__ ), 0, - 12 ) );
+/**
+ * Relative (web) path to the root of SampiCMS.
+ *
+ * @ignore
+ *
+ */
+define ( 'REL_ROOT', substr ( $_SERVER ['SCRIPT_NAME'], 0, - 22 ) );
+/**
+ * Absolute path to the admin root.
+ *
+ * @ignore
+ *
+ */
+define ( 'SampiCMS\ADMIN_ROOT', SampiCMS\ROOT . '/sampi/admin' );
+/**
+ * Relative (web) path to the root of SampiCMS.
+ *
+ * @ignore
+ *
+ */
+define ( 'SampiCMS\ADMIN_REL_ROOT', SampiCMS\REL_ROOT . '/sampi/admin' );
+
+require_once SampiCMS\ROOT . '/sampi/settings.php';
+require_once SampiCMS\ROOT . '/sampi/functions.php';
+require_once SampiCMS\ADMIN_ROOT . '/functions.php';
+$db = new DbFunctions ();
 $db->getSettings ();
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 <title>Login - SampiCMS</title>
-<link href="<?php echo ADMIN_REL_ROOT . '/theme/' . admin_theme . '/global_style.css'; ?>" type="text/css" rel="stylesheet" />
-<link href="<?php echo ADMIN_REL_ROOT.'/favicon.ico'; ?>" rel='shortcut icon' type='image/x-icon' />
+<link href="<?php echo SampiCMS\ADMIN_REL_ROOT . '/theme/' . admin_theme . '/global_style.css'; ?>" type="text/css" rel="stylesheet" />
+<link href="<?php echo SampiCMS\ADMIN_REL_ROOT.'/favicon.ico'; ?>" rel='shortcut icon' type='image/x-icon' />
 </head>
 <body style="height: auto;">
 	<div id="login">
@@ -46,7 +75,7 @@ $db->getSettings ();
 		}
 		?>
 		</div>
-		<form name="login" action="<?php if ($_SERVER['REQUEST_URI'] == ADMIN_REL_ROOT . '/login.php') { echo ADMIN_REL_ROOT;} ?>" method="post">
+		<form name="login" action="<?php if ($_SERVER['REQUEST_URI'] == SampiCMS\ADMIN_REL_ROOT . '/login.php') { echo SampiCMS\ADMIN_REL_ROOT;} ?>" method="post">
 			<table>
 				<tr>
 					<td>Username:</td>

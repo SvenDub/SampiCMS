@@ -1,17 +1,26 @@
 /**
- * SampiCMS admin functions file. This file contains almost all functions that
- * are required to run the administration module of SampiCMS properly.
+ * SampiCMS admin functions file.
+ * 
+ * This file contains almost all functions that are required to run the
+ * administration module of SampiCMS properly.
  * 
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Admin
  */
 var REL_ROOT;
 var ADMIN_REL_ROOT;
+/**
+ * Get the relative (web) roots of SampiCMS and the admin interface.
+ */
 window.onload = function() {
     REL_ROOT = document.getElementsByName("REL_ROOT")[0].content;
     ADMIN_REL_ROOT = document.getElementsByName("ADMIN_REL_ROOT")[0].content;
 };
-
+/**
+ * Save the panel.
+ * 
+ * @param panel
+ * @returns {Boolean}
+ */
 function saveSettings(panel) {
     var a = document.querySelectorAll('[data-name]');
     var i = 0;
@@ -96,7 +105,12 @@ function saveSettings(panel) {
     xmlhttp.send(); // Send HttpRequest
     return false;
 }
-
+/**
+ * Delete a post from the database.
+ * 
+ * @param post_nr
+ * @returns {Boolean}
+ */
 function deletePost(post_nr) {
     var confirmed = window
 	    .confirm('Are you sure you want to delete this post?\nThis cannot be undone!');
@@ -124,9 +138,15 @@ function deletePost(post_nr) {
 	return false;
     }
 }
-
+/**
+ * Stores the opacity of the popup.
+ * @var {float}
+ */
 var popup_opacity = 1;
-
+/**
+ * Show a popup.
+ * @param msg {String} The message to show 
+ */
 function showPopup(msg) {
     document.getElementById('popup_cell').innerHTML = msg;
     document.getElementById('popup_table').style.opacity = popup_opacity;
@@ -135,7 +155,9 @@ function showPopup(msg) {
     document.getElementById('popup_table').style.display = 'table';
     setTimeout('hidePopup()', 2000);
 }
-
+/**
+ * Fade out the popup and hide it.
+ */
 function hidePopup() {
     if (popup_opacity > 0.1) {
 	document.getElementById('popup_table').style.opacity = popup_opacity;

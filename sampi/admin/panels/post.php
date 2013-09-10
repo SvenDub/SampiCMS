@@ -1,15 +1,17 @@
 <?php
+
 /**
  * SampiCMS panel
  *
  * Create a new post.
+ *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Admin
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS\Admin;
+use SampiCMS;
 
 global $db;
 

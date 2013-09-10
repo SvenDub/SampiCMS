@@ -1,18 +1,20 @@
 <?php
 /**
  * SampiCMS theme print single post
- * SampiCMS's default theme
+ *
+ * Show the post editor.
  *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Theme\default
+ * @package SampiCMS\Theme\Sampi13
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS\Theme\Sampi13;
+use SampiCMS;
 
-require_once ADMIN_ROOT . '/functions.php';
-sampi_admin_auth();
+require_once SampiCMS\ADMIN_ROOT . '/functions.php';
+SampiCMS\admin_auth();
 ?>
 <div id="post_<?php echo $this->getNr(); ?>">
 	<div id="post_<?php echo $this->getNr(); ?>_header">
@@ -20,7 +22,7 @@ sampi_admin_auth();
 		<input type="button" class="button-main" id="post_<?php echo $this->getNr(); ?>_header_edit" value="Save" onclick="editPost(<?php echo $this->getNr(); ?>);" />
 		<div id="post_<?php echo $this->getNr(); ?>_header_title" contenteditable="true"><?php echo $this->getTitle(); ?></div>
 		<div id="post_<?php echo $this->getNr(); ?>_header_date"><?php echo $this->getDate(); ?></div>
-		<div id="post_<?php echo $this->getNr(); ?>_header_author"><?php echo $this->getAuthor(SampiPost::$AUTHOR_FULL_NAME) ?></div>
+		<div id="post_<?php echo $this->getNr(); ?>_header_author"><?php echo $this->getAuthor(SampiCMS\Post::AUTHOR_FULL_NAME) ?></div>
 		<?php if ($this->getDate() !== $this->getDateUpdated()): ?>
 			<div id="post_<?php echo $this->getNr(); ?>_header_date_updated"><?php echo $this->getDateUpdated(); ?></div>
 		<?php endif; ?>

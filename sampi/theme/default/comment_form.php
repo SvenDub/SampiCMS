@@ -1,15 +1,17 @@
 <?php
 /**
  * SampiCMS theme post comment
- * SampiCMS's default theme
+ *
+ * Shows a form to post a comment.
  *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS\Theme\default
+ * @package SampiCMS\Theme\Sampi13
  */
 /**
- * Start PHPDoc
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS\Theme\Sampi13;
+use SampiCMS;
 ?>
 <div id="comment_post">
 	<div id="comment_post_header">Leave a comment:</div>

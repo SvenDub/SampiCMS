@@ -1,17 +1,20 @@
 <?php
+
 /**
  * SampiCMS footer file
+ *
  * Displays footer and closes <body> and <html>-tags.
+ *
  * @author Sven Dubbeld <sven.dubbeld1@gmail.com>
- * @package SampiCMS
  */
- /**
- * Start PHPDoc
+/**
+ * Namespace
  */
-$phpdoc;
+namespace SampiCMS;
+use SampiCMS;
 ?>
 <div id="footer">
-	<span class='sampi_footer_powered_by'>Powered bij SampiCMS</span>
+	<span class='sampi_footer_powered_by'>Powered by SampiCMS</span>
 </div>
 </body>
 </html>
