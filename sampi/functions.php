@@ -220,14 +220,20 @@ function get_params() {
 function pages() {
 	global $page, $per_page, $db;
 	
-	$amount = count($db->getAllPosts());
+	$posts = $db->getAllPosts();
+	
+	$amount = count($posts);
 	$pages = ceil ( $amount / $per_page );
 	if ($pages > 1) : // The posts are split up across multiple pages, so show the selector
 		?>
 <div class="posts-limiter-container">
 	<div class="posts-limiter">
-		<img src="<?php echo SampiCMS\REL_ROOT . '/sampi/theme/' . theme . '/images/nav-arrow-prev.png'; ?>" class="nav-arrow" align="left" width="48px"
-			height="48px" />
+		<?php if ($page > 1) : ?>
+		<a href="?page=<?php echo $page-1 . '&per_page=' . $per_page; ?>"><img src="<?php echo SampiCMS\REL_ROOT . '/sampi/theme/' . theme . '/images/nav-arrow-prev.png'; ?>" class="nav-arrow" align="left" width="48px"
+			height="48px" /></a>
+		<?php else : ?>
+		<img src="" class="nav-arrow" align="left" width="48px"	height="48px" style="visibility: hidden;" />
+		<?php endif;?>
 		<form name="posts_limiter" action="?" method="get">
 			Go to page: <select name="page" onchange="javascript:submit();">
 		<?php
@@ -247,8 +253,12 @@ function pages() {
 		?>
 		</form>
 		<?php per_page_selector(); ?>
-		<img src="<?php echo SampiCMS\REL_ROOT . '/sampi/theme/' . theme . '/images/nav-arrow-next.png'; ?>" class="nav-arrow" align="right" width="48px"
-			height="48px" />
+		<?php if ($page < $pages) : ?>
+		<a href="?page=<?php echo $page+1 . '&per_page=' . $per_page; ?>"><img src="<?php echo SampiCMS\REL_ROOT . '/sampi/theme/' . theme . '/images/nav-arrow-next.png'; ?>" class="nav-arrow" align="right" width="48px"
+			height="48px" /></a>
+		<?php else: ?>
+		<img src="" class="nav-arrow" align="right" width="48px" height="48px" style="visibility: hidden;" />
+		<?php endif; ?>
 	</div>
 </div>
 <?php endif;
