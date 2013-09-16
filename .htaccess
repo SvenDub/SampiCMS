@@ -1,3 +1,21 @@
+Options -Indexes
+
+<IfModule headers_module>
+
+	# Send X-Content-Type-Options to prevent MIME-Type confusion
+	Header always add X-Content-Type-Options "nosniff"
+	# Send X-Frame-Options to prevent ClickJacking attacks
+	Header always add X-Frame-Options "DENY"
+	
+</IfModule>
+
+<IfModule php5_module>
+    
+    # Set session cookie to use HttpOnly, which is more secure
+    php_value session.cookie_httponly true
+    
+</IfModule>
+
 <FilesMatch "\.(php|log)$">
 	
 	# Deny access to all php scripts and logs 
