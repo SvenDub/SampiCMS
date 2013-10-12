@@ -127,9 +127,11 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 				foreach ( $posts as $key => $val ) {
 					$response ['posts'] [$val->getNr ()] ['post_nr'] = $val->getNr ();
 					$response ['posts'] [$val->getNr ()] ['date'] = $val->getDate ();
+					$response ['posts'] [$val->getNr ()] ['modified'] = $val->getDateUpdated();
 					$response ['posts'] [$val->getNr ()] ['author'] = $val->getAuthor ( SampiCMS\Post::AUTHOR_USERNAME );
 					$response ['posts'] [$val->getNr ()] ['title'] = $val->getTitle ();
 					$response ['posts'] [$val->getNr ()] ['content'] = $val->getContent ();
+					$response ['posts'] [$val->getNr ()] ['keywords'] = $val->getKeywords();
 				}
 				echo json_encode ( $response );
 			} else {
