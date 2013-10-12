@@ -45,9 +45,9 @@ Options -Indexes
 	
 </FilesMatch>
 
-<FilesMatch "^query_\.php$">
+<FilesMatch "query_">
 	
-	# Allow querys
+	# Allow queries
 	Order Allow,Deny
 	Allow from all
 	
