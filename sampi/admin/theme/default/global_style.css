@@ -175,3 +175,19 @@ input[type="submit"]:active,input.button-main:active {
 	box-shadow: 2px 2px 2px #88E inset, -1px -1px 1px #88E inset;
 	background-color: #39AFFF;
 }
+
+div#login table {
+	position: relative;
+	width: 100%;
+}
+
+div#login table input[type="button"], div#login table input[type="submit"] {
+	position: absolute;
+	right: 0px;
+	height: 24px;
+	margin-top: -7px;
+}
+
+div#login table input[type="submit"] {
+	right: 50px;
+}

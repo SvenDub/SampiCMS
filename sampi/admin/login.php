@@ -27,14 +27,14 @@ session_start ();
  * @ignore
  *
  */
-define ( 'ROOT', substr ( dirname ( __FILE__ ), 0, - 12 ) );
+define ( 'SampiCMS\ROOT', substr ( dirname ( __FILE__ ), 0, - 12 ) );
 /**
  * Relative (web) path to the root of SampiCMS.
  *
  * @ignore
  *
  */
-define ( 'REL_ROOT', substr ( $_SERVER ['SCRIPT_NAME'], 0, - 22 ) );
+define ( 'SampiCMS\REL_ROOT', substr ( $_SERVER ['SCRIPT_NAME'], 0, - 22 ) );
 /**
  * Absolute path to the admin root.
  *
@@ -86,7 +86,10 @@ $db->getSettings ();
 					<td><input type="password" name="login[password]" /></td>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="submit" name="login[submit]" value="Login" /></td>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="2">&nbsp;<input type="submit" name="login[submit]" value="Login" /><input type="button" onclick="window.location.href='<?php echo SampiCMS\REL_ROOT; ?>';" value="Back" class="ui-align-right"></td>
 				</tr>
 			</table>
 		</form>
