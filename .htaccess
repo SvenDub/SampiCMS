@@ -53,6 +53,14 @@ Options -Indexes
 	
 </FilesMatch>
 
+<FilesMatch "setup.php">
+	
+	# Allow setup
+	Order Allow,Deny
+	Allow from all
+
+</FilesMatch>
+
 <FilesMatch "tmp.php">
 
 	# TMP

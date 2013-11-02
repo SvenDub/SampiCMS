@@ -34,6 +34,12 @@ define ( 'SampiCMS\db_pass', '' );
  * This is usually either '127.0.0.1' or 'localhost'. Contact your hosting provider for the correct address.
  */
 define ( 'SampiCMS\db_host', '' );
+/**
+ * Is the setup completed?
+ *
+ * Set to true if the setup has been completed.
+ */
+define ( 'SampiCMS\set_up', false );
 
 /**
  * Name of the server administrator.

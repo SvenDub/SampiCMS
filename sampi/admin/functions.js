@@ -9,6 +9,8 @@
 var REL_ROOT;
 var ADMIN_REL_ROOT;
 /**
+ * JavaScript functions to execute on page load.
+ * 
  * Get the relative (web) roots of SampiCMS and the admin interface.
  */
 window.onload = function() {
@@ -35,11 +37,7 @@ function saveSettings(panel) {
 
     // Create HttpRequest
     var xmlhttp;
-    if (window.XMLHttpRequest) { // IE7+, Firefox, Chrome, Opera, Safari
-	xmlhttp = new XMLHttpRequest();
-    } else { // IE6, IE5
-	xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
+    xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() { // Handle HttpRequest
 	if (xmlhttp.readyState == 4) {
 	    if (xmlhttp.status == 200) {
@@ -49,7 +47,6 @@ function saveSettings(panel) {
 		showPopup("An error occured while saving. Please try again.");
 	    }
 	}
-	;
     };
     switch (panel) {
     case "general":
@@ -117,11 +114,7 @@ function deletePost(post_nr) {
     if (confirmed == true) {
 	// Create HttpRequest
 	var xmlhttp;
-	if (window.XMLHttpRequest) { // IE7+, Firefox, Chrome, Opera, Safari
-	    xmlhttp = new XMLHttpRequest();
-	} else { // IE6, IE5
-	    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-	}
+	xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() { // Handle HttpRequest
 	    if (xmlhttp.readyState == 4) {
 		if (xmlhttp.status == 200) {
@@ -130,7 +123,6 @@ function deletePost(post_nr) {
 		    showPopup("Error deleting post!");
 		}
 	    }
-	    ;
 	};
 	xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_delete_post.php?post_nr="
 		+ post_nr, true);

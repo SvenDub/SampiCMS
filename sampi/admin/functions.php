@@ -22,6 +22,10 @@ use SampiCMS;
 function init() {
 	global $db;
 	
+	if (SampiCMS\set_up !== true) {
+		\header('Location: '.SampiCMS\REL_ROOT.'/sampi/admin/setup.php');
+	}
+	
 	$db = new DbFunctions ();
 	
 	SampiCMS\admin_auth ();
@@ -170,13 +174,28 @@ class DbFunctions extends SampiCMS\DbFunctions {
 	 *        	The name of the setting.
 	 * @param string $value
 	 *        	The value of the setting.
+	 * @return int
+	 * 			The code returned by the MySQLi statement.
 	 */
 	public function saveSetting($setting, $value) {
-		$stmt = $this->con->prepare ( "UPDATE sampi_settings SET setting_value=? WHERE setting_name=?" );
-		$stmt->bind_param ( 'ss', $value, $setting );
-		$stmt->execute ();
-		$stmt->free_result ();
-		$stmt->close ();
+		$stmt1 = $this->con->stmt_init();
+		$stmt1->prepare( "SELECT * FROM sampi_settings WHERE setting_name=?" );
+		$stmt1->bind_param('s', $setting);
+		$stmt1->execute();
+		$stmt1->store_result();
+		
+		$stmt2 = $this->con->stmt_init();
+		if ($stmt1->num_rows == 0) {
+			$stmt2->prepare( "INSERT INTO sampi_settings (setting_value, setting_name) VALUES (?, ?)" );
+		} else {
+			$stmt2->prepare ( "UPDATE sampi_settings SET setting_value=? WHERE setting_name=?" );
+		}
+		$stmt2->bind_param ( 'ss', $value, $setting );
+		$stmt2->execute ();
+		$errno = $stmt2->errno;
+		$stmt2->free_result ();
+		$stmt2->close ();
+		return $errno;
 	}
 }
 

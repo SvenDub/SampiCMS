@@ -61,6 +61,10 @@ function error($code, $arg = '', $fatal = false) {
 function init() {
 	global $db;
 	
+	if (SampiCMS\set_up !== true) {
+		\header('Location: '.SampiCMS\REL_ROOT.'/sampi/admin/setup.php');
+	}
+	
 	if (isset ( $_GET ['error'] )) {
 		/** Shows error page. */
 		include_once (SampiCMS\ROOT . '/sampi/error.php');
@@ -160,7 +164,7 @@ function mode_selector() {
 	} elseif ($p !== false) { // Single post?
 		$post = $db->getSinglePost($p);
 		if ($post->getNr() == null) {
-			$post = new Post(404, 'Error 404, post not found!', null, null, 'The requested post could not be found.', null, null);
+			$post = new Post(404, 'Error 404, post not found!', null, 'The requested post could not be found.', null, null, null);
 			$post->show(Post::SHOW_ERROR);
 		} elseif (isset($_GET['edit'])) {
 			$post->show(Post::SHOW_EDIT);
@@ -169,8 +173,13 @@ function mode_selector() {
 		}
 	} else { // Blogstream
 		$posts = $db->getPosts();
-		foreach ($posts as $key => $val) {
-			$val->show(Post::SHOW_MULTIPLE);
+		if (count($posts) > 0) {
+			foreach ($posts as $key => $val) {
+				$val->show(Post::SHOW_MULTIPLE);
+			}
+		} else {
+			$post = new Post(0, 'No posts yet!', null, 'Create your first post in the Admin panel.', null, null, null);
+			$post->show(Post::SHOW_ERROR);
 		}
 	}
 }
@@ -735,7 +744,7 @@ class DbFunctions {
 	 * @param string $google_plus_user Google+ username
 	 * @return boolean True on success, false on failure
 	 */
-	function newAuthor($username, $password, $full_name, $rights, $twitter_user, $facebook_user, $google_plus_user) {
+	function newAuthor($username, $password, $full_name, $rights, $twitter_user = null, $facebook_user = null, $google_plus_user = null) {
 		$success = false;
 		
 		$salt = sprintf ( "$2a$%02d$", 10 ) . strtr ( base64_encode ( mcrypt_create_iv ( 16, MCRYPT_DEV_URANDOM ) ), '+', '.' ); // Create password salt
@@ -952,7 +961,7 @@ class Post {
 	private $content;
 	/**
 	 * Author
-	 * @var string
+	 * @var string|array
 	 */
 	private $author;
 	/**
@@ -1055,7 +1064,11 @@ class Post {
 		$this->dateUpdated = $dateUpdated;
 		$this->keywords = $keywords;
 		
-		$this->author = $db->getAuthorData($this->author);
+		if ($db->getAuthorData($this->author)['full_name'] !== null) {
+			$this->author = $db->getAuthorData($this->author);
+		} else {
+			$this->author = array('full_name'=>$this->author);
+		}
 		$this->commentsCount = $db->getCommentsCount($this->nr);
 		$this->comments = $db->getComments($this->nr);
 		
@@ -1530,6 +1543,27 @@ function admin_auth() {
 		session_regenerate_id();
 		$session = session_get_cookie_params();
 		setcookie(session_name(), session_id(), $session['lifetime'], $session['path'], $session['domain'], false, true );
+	}
+}
+
+/**
+ * Search for a string and return the line number it's found on.
+ *
+ * @param string $needle
+ * @param array $content The content of the file as an array
+ * @return int|boolean
+ * @see \file()
+ */
+function searchInFile($needle, $content) {
+	$match = false;
+	foreach ($content as $line=>$text) {
+		if (strpos($text, $needle) !== false) {
+			$match = true;
+			return $line;
+		}
+	}
+	if (!$match) {
+		return false;
 	}
 }
 

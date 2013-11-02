@@ -181,7 +181,7 @@ div#login table {
 	width: 100%;
 }
 
-div#login table input[type="button"], div#login table input[type="submit"] {
+div#login table input[type="button"],div#login table input[type="submit"] {
 	position: absolute;
 	right: 0px;
 	height: 24px;
@@ -190,4 +190,88 @@ div#login table input[type="button"], div#login table input[type="submit"] {
 
 div#login table input[type="submit"] {
 	right: 50px;
+}
+
+div#setup {
+	background-color: #FFFFFF;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 5px;
+	box-shadow: 2px 2px 2px #C8C8C8;
+	border-radius: 2px;
+	width: 700px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+div#setup_header {
+	margin: 0px;
+}
+
+div#setup_header_title {
+	font-size: 2em;
+	font-weight: bold;
+}
+
+div#setup_header_subtitle {
+	font-style: italic;
+	color: #C4C4C4;
+}
+
+div#setup_body {
+	opacity: 1;
+	transition: opacity 0.5s;
+}
+
+div#setup_body table {
+	width: 100%;
+}
+
+div#setup_body a {
+	color: #0048FF;
+}
+
+div#setup_body a:hover {
+	color: #0048FF;
+	text-decoration: underline;
+}
+
+div#setup_footer {
+	border-top: 1px #AAAAAA solid;
+	color: #AAAAAA;
+	font-size: 0.9em;
+	position: relative;
+	height: 30px;
+	line-height: 30px;
+	margin-top: 10px;
+}
+
+div[id^="setup_footer_"] {
+	display: inline;
+	padding-right: 20px;
+	transition: border 1s;
+}
+
+div#setup_footer_1 {
+	border-bottom: #44BBFF solid 5px;
+}
+
+div#setup_msg {
+	background-color: #C8C8C8;
+	padding: 10px;
+	font-family: monospace;
+}
+
+.ui-hint {
+	color: #AAAAAA;
+	font-size: 0.9em;
+	opacity: 0;
+	max-height: 0px;
+	transition: opacity 0.5s, max-height 1s;
+	padding: 5px 0;
+}
+
+.ui-hint-host:hover>.ui-hint,input:focus ~.ui-hint,.ui-hint-host:hover>.textarea-wrapper>.ui-hint,textarea:focus ~.ui-hint,select:focus ~.ui-hint {
+	opacity: 1;
+	max-height: 50px;
 }
