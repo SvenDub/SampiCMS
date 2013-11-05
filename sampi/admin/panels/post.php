@@ -40,19 +40,22 @@ if (isset ( $_GET ['title'] ) && isset ( $_GET ['content'] )) {
 // Show form
 ?>
 <p>Create a new post.</p>
-<table>
-	<tr>
-		<td>Title</td>
-		<td><input type="text" id="settings[post][title]" value="<?php echo $title; ?>" /></td>
-	</tr>
-	<tr>
-		<td>Content</td>
-		<td><div class="textarea-wrapper">
-				<textarea id="settings[post][content]" rows="10" cols="50"><?php echo $content; ?></textarea>
-			</div></td>
-	</tr>
-	<tr>
-		<td>Keywords</td>
-		<td><input type="text" id="settings[post][keywords]" value="<?php echo $keywords; ?>" /></td>
-	</tr>
-</table>
+<div>
+	<div class="ui-hint-host">
+		<div class="ui-input-label">Title</div>
+		<input type="text" id="settings[post][title]" value="<?php echo $title; ?>" />
+		<div class="ui-hint">The title of the post.</div>
+	</div>
+	<div class="ui-hint-host">
+		<div class="ui-input-label">Content</div>
+		<div class="textarea-wrapper">
+			<textarea id="settings[post][content]" rows="10" cols="50"><?php echo $content; ?></textarea>
+			<div class="ui-hint">The content of the post. Supports HTML tags.</div>
+		</div>
+	</div>
+	<div class="ui-hint-host">
+		<div class="ui-input-label">Keywords</div>
+		<input type="text" id="settings[post][keywords]" value="<?php echo $keywords; ?>" />
+		<div class="ui-hint">The keywords of the post. Separate multiple keywords with a comma.</div>
+	</div>
+</div>

@@ -18,6 +18,7 @@ global $db;
 $posts = $db->getPosts ();
 $posts = array_reverse ( $posts, true );
 ?>
+<div>
 <ol class="edit_list">
 <?php
 // List the posts
@@ -26,3 +27,4 @@ foreach ( $posts as $key => $val ) {
 }
 ?>
 </ol>
+</div>

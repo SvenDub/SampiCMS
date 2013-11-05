@@ -60,6 +60,7 @@ $db->getSettings ();
 <html>
 <head>
 <title>Login - SampiCMS</title>
+<link href="<?php echo SampiCMS\ADMIN_REL_ROOT . '/theme/'. admin_theme . '/style.css'; ?>" type="text/css" rel="stylesheet" />
 <link href="<?php echo SampiCMS\ADMIN_REL_ROOT . '/theme/' . admin_theme . '/global_style.css'; ?>" type="text/css" rel="stylesheet" />
 <link href="<?php echo SampiCMS\ADMIN_REL_ROOT.'/favicon.ico'; ?>" rel='shortcut icon' type='image/x-icon' />
 </head>
@@ -76,22 +77,18 @@ $db->getSettings ();
 		?>
 		</div>
 		<form name="login" action="<?php if ($_SERVER['REQUEST_URI'] == SampiCMS\ADMIN_REL_ROOT . '/login.php') { echo SampiCMS\ADMIN_REL_ROOT;} ?>" method="post">
-			<table>
-				<tr>
-					<td>Username:</td>
-					<td><input type="text" name="login[username]" /></td>
-				</tr>
-				<tr>
-					<td>Password:</td>
-					<td><input type="password" name="login[password]" /></td>
-				</tr>
-				<tr>
-					<td colspan="2">&nbsp;</td>
-				</tr>
-				<tr>
-					<td colspan="2">&nbsp;<input type="submit" name="login[submit]" value="Login" /><input type="button" onclick="window.location.href='<?php echo SampiCMS\REL_ROOT; ?>';" value="Back" class="ui-align-right"></td>
-				</tr>
-			</table>
+			<div>
+				<div class="ui-hint-host">
+					<div class="ui-input-label">Username</div>
+					<input type="text" name="login[username]" />
+				</div>
+				<div class="ui-hint-host">
+					<div class="ui-input-label">Password</div>
+					<input type="password" name="login[password]" />
+				</div>
+				<br />
+				<input type="submit" class="ui-btn-main" name="login[submit]" value="Login" />&nbsp;<input type="button" onclick="window.location.href='<?php echo SampiCMS\REL_ROOT; ?>';" value="Back" class="ui-btn">
+			</div>
 		</form>
 	</div>
 </body>

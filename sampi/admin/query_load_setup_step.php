@@ -60,22 +60,22 @@ switch ($step) {
 <p>Let's start with suppling the login data for the database. If you do not know what values to use, contact your hosting provider.</p>
 <form method="post" action="" autocomplete="off" onchange="checkSetupStep(2, false);">
 	<div class="ui-hint-host">
-		<div class="ui-input-label">Hostname:</div>
+		<div class="ui-input-label">Hostname</div>
 		<input type="text" name="db_host" id="db_host" />
 		<div class="ui-hint">The database server to connect to.</div>
 	</div>
 	<div class="ui-hint-host">
-		<div class="ui-input-label">Database:</div>
+		<div class="ui-input-label">Database</div>
 		<input type="text" name="db" id="db" />
 		<div class="ui-hint">The name of the database.</div>
 	</div>
 	<div class="ui-hint-host">
-		<div class="ui-input-label">Username:</div>
+		<div class="ui-input-label">Username</div>
 		<input type="text" name="db_user" id="db_user" />
 		<div class="ui-hint">The username used to connect to the database.</div>
 	</div>
 	<div class="ui-hint-host">
-		<div class="ui-input-label">Password:</div>
+		<div class="ui-input-label">Password</div>
 		<input type="password" name="db_pass" id="db_pass" />
 		<div class="ui-hint">The password used to connect to the database.</div>
 	</div>

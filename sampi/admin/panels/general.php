@@ -48,20 +48,22 @@ if (isset ( $_GET ['global_user'] )) {
 // Show form
 ?>
 <p>Most common settings that affect SampiCMS's behavior.</p>
-<table>
-	<tr>
-		<td>Name of the site</td>
-		<td><input type="text" id="settings[general][site_title]" value="<?php echo $site_title; ?>" /></td>
-	</tr>
-	<tr>
-		<td>Description of the site</td>
-		<td><div class="textarea-wrapper">
-				<textarea id="settings[general][site_description]" rows="10" cols="50"><?php echo $site_description; ?></textarea>
-			</div></td>
-	</tr>
-	<tr>
-		<td>Date-time format to use for the post date-time</td>
-		<td><select id="settings[general][date_format]">
+<div>
+	<div class="ui-hint-host">
+		<div class="ui-input-label">Site name</div>
+		<input type="text" id="settings[general][site_title]" value="<?php echo $site_title; ?>" />
+		<div class="ui-hint">The name of your site.</div>
+	</div>
+	<div class="ui-hint-host">
+		<div class="ui-input-label">Site description</div>
+		<div class="textarea-wrapper">
+			<textarea id="settings[general][site_description]" rows="10" cols="50"><?php echo $site_description; ?></textarea>
+			<div class="ui-hint">A short description of your site or maybe a good punchline.</div>
+		</div>
+	</div>
+	<div class="ui-hint-host">
+		<div class="ui-input-label">Date-time format</div>
+		<select id="settings[general][date_format]">
   			<?php
 					$values = array (
 							'j-n-y',
@@ -80,15 +82,17 @@ if (isset ( $_GET ['global_user'] )) {
 					}
 					?>
 			<?php // @todo <option>Custom...</option> ?>
-		</select></td>
-	</tr>
-	<tr>
-		<td>Values to show for the amount of posts per page</td>
-		<td><input type="text" id="settings[general][per_page_values]" value="<?php echo $per_page_values; ?>" /></td>
-	</tr>
-	<tr>
-		<td>User to show as main author for the site</td>
-		<td><select id="settings[general][global_user]">
+		</select>
+		<div class="ui-hint">Date-time format to use for the post date-time.</div>
+	</div>
+	<div class="ui-hint-host">
+		<div class="ui-input-label">Per page selector values</div>
+		<input type="text" id="settings[general][per_page_values]" value="<?php echo $per_page_values; ?>" />
+		<div class="ui-hint">Values to show for the amount of posts per page.</div>
+	</div>
+	<div class="ui-hint-host">
+		<div class="ui-input-label">Global user</div>
+		<select id="settings[general][global_user]">
 			<?php
 			$users = $db->getAuthors ();
 			for($i = 0; $i < count ( $users ); $i ++) {
@@ -99,6 +103,7 @@ if (isset ( $_GET ['global_user'] )) {
 				}
 			}
 			?>
-		</select></td>
-
-</table>
+		</select>
+		<div class="ui-hint">User to show as main author for the site.</div>
+	</div>
+</div>
