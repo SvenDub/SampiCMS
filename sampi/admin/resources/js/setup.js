@@ -73,7 +73,6 @@ window.onhashchange = function() {
  * @param step
  */
 function loadSetupStep(step) {
-	document.getElementById("setup_body").style.opacity = "0";
 	function transition() {
 		// Create HttpRequest
 		var xmlhttp;
@@ -98,17 +97,24 @@ function loadSetupStep(step) {
 				} else {
 					document.getElementById("setup_body").innerHTML = "Error loading this step. Please refresh to try again.";
 				}
-				document.getElementById("setup_body").removeEventListener(
-						"transitionend", transition, true);
-				document.getElementById("setup_body").style.opacity = "1";
+				if (supportsTransitions()) {
+					document.getElementById("setup_body").removeEventListener(
+							"transitionend", transition, true);
+					document.getElementById("setup_body").style.opacity = "1";
+				}
 			}
 		};
 		xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_load_setup_step.php?step="
 				+ step, true);
 		xmlhttp.send(); // Send HttpRequest
 	}
-	document.getElementById("setup_body").addEventListener("transitionend",
-			transition, true);
+	if (supportsTransitions()) {
+		document.getElementById("setup_body").style.opacity = "0";
+		document.getElementById("setup_body").addEventListener("transitionend",
+				transition, true);
+	} else {
+		transition();
+	}
 }
 /**
  * Check a step of the setup.

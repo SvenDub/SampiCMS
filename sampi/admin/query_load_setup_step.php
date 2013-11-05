@@ -179,7 +179,7 @@ switch ($step) {
 		break;
 case 5:
 	?>
-<p>That's all! SampiCMS is now ready to rock. Just click 'next' to continue to your brand new site.</p>
+<p>That's all! SampiCMS is now ready to rock. Just click 'next' to continue to your brand new site. Additional settings can be found in the sampi/settings.php file.</p>
 <form method="post" action="" autocomplete="off" onchange="checkSetupStep(5, false);">
 	<input type="submit" value="Next" onclick="checkSetupStep(5, true); return false;" />
 </form>

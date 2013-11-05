@@ -162,3 +162,15 @@ function hidePopup() {
 	popup_opacity = 1;
     }
 }
+/**
+ * Check for transition support.
+ * 
+ * @return {Boolean}
+ */
+function supportsTransitions() {
+	var s = document.body.style;
+	var supportsTransitions = 'transition' in s || 'WebkitTransition' in s
+			|| 'MozTransition' in s || 'msTransition' in s
+			|| 'OTransition' in s;
+	return supportsTransitions;
+}
