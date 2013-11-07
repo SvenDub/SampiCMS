@@ -50,53 +50,61 @@ function saveSettings(panel) {
     };
     switch (panel) {
     case "general":
-	var site_title = document
-		.getElementById("settings[general][site_title]").value;
-	var site_description = document
-		.getElementById("settings[general][site_description]").value;
-	var date_format = document
-		.getElementById("settings[general][date_format]").options[document
-		.getElementById("settings[general][date_format]").selectedIndex].value;
-	var per_page_values = document
-		.getElementById("settings[general][per_page_values]").value;
-
-	xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
-		+ panel + "&site_title=" + site_title + "&site_description="
-		+ site_description + "&date_format=" + date_format
-		+ "&per_page_values=" + per_page_values, true);
+		var site_title = document
+			.getElementById("settings[general][site_title]").value;
+		var site_description = document
+			.getElementById("settings[general][site_description]").value;
+		var date_format = document
+			.getElementById("settings[general][date_format]").options[document
+			.getElementById("settings[general][date_format]").selectedIndex].value;
+		var per_page_values = document
+			.getElementById("settings[general][per_page_values]").value;
+	
+		xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
+			+ panel + "&site_title=" + site_title + "&site_description="
+			+ site_description + "&date_format=" + date_format
+			+ "&per_page_values=" + per_page_values, true);
 	break;
 
     case "post":
-	var title = document.getElementById("settings[post][title]").value;
-	var content = document.getElementById("settings[post][content]").value;
-	var keywords = document.getElementById("settings[post][keywords]").value;
-
-	xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
-		+ panel + "&title=" + title + "&content=" + content
-		+ "&keywords=" + keywords, true);
+		var title = document.getElementById("settings[post][title]").value;
+		var content = document.getElementById("settings[post][content]").value;
+		var keywords = document.getElementById("settings[post][keywords]").value;
+	
+		xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
+			+ panel + "&title=" + title + "&content=" + content
+			+ "&keywords=" + keywords, true);
 	break;
+	
+    case "static":
+    	var title = document.getElementById("settings[static][title]").value;
+    	var content = document.getElementById("settings[static][content]").value;
+
+    	xmlhttp.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
+    		+ panel + "&title=" + title + "&content=" + content, true);
+    	break;
 
     case "add_user":
-	var username = document.getElementById("settings[add_user][username]").value;
-	var password = document.getElementById("settings[add_user][password]").value;
-	var full_name = document
-		.getElementById("settings[add_user][full_name]").value;
-	var rights = document.getElementById("settings[add_user][rights]").value;
-	/* TODO Checkboxes instead of manual entry of right codes */
-	var twitter_user = document
-		.getElementById("settings[add_user][twitter_user]").value;
-	var facebook_user = document
-		.getElementById("settings[add_user][facebook_user]").value;
-	var google_plus_user = document
-		.getElementById("settings[add_user][google_plus_user]").value;
-
-	xmlhttp
-		.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
-			+ panel + "&username=" + username + "&password="
-			+ password + "&full_name=" + full_name + "&rights="
-			+ rights + "&twitter_user=" + twitter_user
-			+ "&facebook_user=" + facebook_user
-			+ "&google_plus_user=" + google_plus_user, true);
+		var username = document.getElementById("settings[add_user][username]").value;
+		var password = document.getElementById("settings[add_user][password]").value;
+		var full_name = document
+			.getElementById("settings[add_user][full_name]").value;
+		var rights = document.getElementById("settings[add_user][rights]").value;
+		/* TODO Checkboxes instead of manual entry of right codes */
+		var twitter_user = document
+			.getElementById("settings[add_user][twitter_user]").value;
+		var facebook_user = document
+			.getElementById("settings[add_user][facebook_user]").value;
+		var google_plus_user = document
+			.getElementById("settings[add_user][google_plus_user]").value;
+	
+		xmlhttp
+			.open("GET", ADMIN_REL_ROOT + "/query_print_panel.php?panel="
+				+ panel + "&username=" + username + "&password="
+				+ password + "&full_name=" + full_name + "&rights="
+				+ rights + "&twitter_user=" + twitter_user
+				+ "&facebook_user=" + facebook_user
+				+ "&google_plus_user=" + google_plus_user, true);
 	break;
     }
     xmlhttp.send(); // Send HttpRequest

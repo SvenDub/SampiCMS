@@ -658,12 +658,8 @@ class DbFunctions {
 	 *        	Title of the post
 	 * @param string $content
 	 *        	Content of the post
-	 * @param string $username
-	 *        	Username of the poster.
-	 *        	Used in combination with $password to authenticate the poster.
-	 * @param string $password
-	 *        	Password of the poster.
-	 *        	Used in combination with $username to authenticate the poster.
+	 * @param string $keywords
+	 * 			Keywords of the posts
 	 * @return boolean True on success, false on failure
 	 *
 	 * @see \SampiCMS\Post
@@ -676,6 +672,38 @@ class DbFunctions {
 				$dateUpdated = date ( 'Y-m-d H:i:s' );
 				$stmt = $this->con->prepare( "INSERT INTO sampi_posts (date, date_updated, author, title, content, keywords) VALUES (?, ?, ?, ?, ?, ?)" );
 				$stmt->bind_param('ssssss', $date, $dateUpdated, $author, $title, $content, $keywords);
+				$stmt->execute();
+				if ($stmt->affected_rows > 0) {
+					$stmt->free_result();
+					$stmt->close();
+					return true;
+				} else {
+					$stmt->free_result();
+					$stmt->close();
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+	}
+	
+	/**
+	 * Add a new static to the database
+	 *
+	 * @param string $title
+	 *        	Title of the static
+	 * @param string $content
+	 *        	Content of the static
+	 * @return boolean True on success, false on failure
+	 *
+	 * @see \SampiCMS\StaticPage
+	 */
+	function newStatic($title, $content) {
+		if ($title !== "" && $content !== "") {
+			if ($_SESSION['logged_in']) {
+				$stmt = $this->con->prepare( "INSERT INTO sampi_statics (title, content) VALUES (?, ?)" );
+				$stmt->bind_param('ss', $title, $content);
 				$stmt->execute();
 				if ($stmt->affected_rows > 0) {
 					$stmt->free_result();
