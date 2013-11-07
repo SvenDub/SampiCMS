@@ -3,15 +3,20 @@ SampiCMS
 A lightweight Open Source Content Management System written in PHP.
 
 Usage
-=====
-The current version is not yet ready for use.
+-----
+1. Download the latest release.
+2. Unpack the release to the webserver.
+3. Create an empty database for SampiCMS or use an existing one. Ask your hosting provider how to do this.
+4. Open your webbrowser and navigate to /sampi/admin/setup.php (e.g. http://example.com/sampi/admin/setup.php).
+5. Follow the steps.
+6. That's it. You're good to go!
 
 Preview
-=======
+-------
 A working preview will soon be available.
 
 License
-=======
+-------
 	The MIT License (MIT)
 
 	Copyright (c) 2013 Sven Dubbeld
