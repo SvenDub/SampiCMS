@@ -89,14 +89,6 @@ a:hover {
 	color: #0048FF;
 }
 
-a[class="sidebar_link"] {
-	color: #0048FF;
-}
-
-a[class="sidebar_link"]:hover {
-	text-decoration: underline;
-}
-
 a[class="footer_link"] {
 	color: #AAAAAA;
 }
@@ -105,9 +97,18 @@ a[class="footer_link"]:hover {
 	color: #0048FF;
 }
 
-ul[class="sidebar_list"] {
+ul.ui-sidebar-list {
 	list-style-type: none;
 	padding-left: 0;
+	margin-bottom: 10px;
+}
+
+ul.ui-sidebar-list a.ui-sidebar-link {
+	color: #0048FF;
+}
+
+ul.ui-sidebar-list a.ui-sidebar-link:hover {
+	text-decoration: underline;
 }
 
 p {

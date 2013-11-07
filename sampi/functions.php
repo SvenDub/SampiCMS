@@ -497,7 +497,7 @@ class DbFunctions {
 	/**
 	 * Fetch posts from the database
 	 *
-	 * Return them as an array with \SampiCMS\Post 's.
+	 * Return them as an array with \SampiCMS\Post.
 	 *
 	 * @return array
 	 * @see \SampiCMS\Post
@@ -525,7 +525,7 @@ class DbFunctions {
 	/**
 	 * Fetches posts from the database
 	 *
-	 * Return them as an array with \SampiCMS\Post 's.
+	 * Return them as an array with \SampiCMS\Post.
 	 *
 	 * @return array
 	 * @see \SampiCMS\Post
@@ -541,6 +541,26 @@ class DbFunctions {
 		$stmt->free_result();
 		$stmt->close();
 		return $posts;
+	}
+	
+	/**
+	 * Fetches static pages from the database
+	 *
+	 * Return them as an array with \SampiCMS\Post.
+	 *
+	 * @return array
+	 * @see \SampiCMS\StaticPage
+	 */
+	function getAllStatics() {
+		$stmt = $this->con->prepare( "SELECT page_nr, title, content FROM sampi_statics ORDER BY page_nr ASC" );
+		$stmt->execute();
+		$stmt->bind_result($page_nr, $title, $content);
+		while ($stmt->fetch()) {
+			$statics [$page_nr] = new StaticPage($page_nr, $title, $content);
+		}
+		$stmt->free_result();
+		$stmt->close();
+		return $statics;
 	}
 	
 	/**
@@ -806,7 +826,7 @@ class DbFunctions {
 	/**
 	 * Retrieve all authors from the database.
 	 *
-	 * Return them as an array with \SampiCMS\User 's.
+	 * Return them as an array with \SampiCMS\User.
 	 *
 	 * @return array
 	 * @see \SampiCMS\User
@@ -982,7 +1002,7 @@ class Post {
 	/**
 	 * Comments.
 	 *
-	 * Array containting \SampiCMS\Comment 's.
+	 * Array containting \SampiCMS\Comment.
 	 *
 	 * @var array
 	 */

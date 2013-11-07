@@ -12,7 +12,7 @@
 namespace SampiCMS;
 use SampiCMS;
 ?>
-<ul class="sidebar_list">
-	<li><a class="sidebar_link" href="<?php echo SampiCMS\REL_ROOT; ?>">Home</a></li>
-	<li><a class="sidebar_link" href="<?php echo SampiCMS\ADMIN_REL_ROOT; ?>">Admin panel</a></li>
+<ul class="ui-sidebar-list">
+	<li><a class="ui-sidebar-link" href="<?php echo SampiCMS\REL_ROOT; ?>">Home</a></li>
+	<li><a class="ui-sidebar-link" href="<?php echo SampiCMS\ADMIN_REL_ROOT; ?>">Admin panel</a></li>
 </ul>

@@ -89,11 +89,16 @@ a:hover {
 	color: #0048FF;
 }
 
-a[class="sidebar_link"] {
+ul.ui-sidebar-list {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+ul.ui-sidebar-list a.ui-sidebar-link {
 	color: #0048FF;
 }
 
-a[class="sidebar_link"]:hover {
+ul.ui-sidebar-list a.ui-sidebar-link:hover {
 	text-decoration: underline;
 }
 
@@ -103,11 +108,6 @@ a[class="footer_link"] {
 
 a[class="footer_link"]:hover {
 	color: #0048FF;
-}
-
-ul[class="sidebar_list"] {
-	list-style-type: none;
-	padding-left: 0;
 }
 
 p {

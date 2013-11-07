@@ -103,7 +103,7 @@ function panel_links() {
 	$stmt->execute ();
 	$stmt->bind_result ( $nr, $name );
 	while ( $stmt->fetch () ) {
-		echo '<li><a class="sidebar_link" href="?p=' . $nr . '">' . $name . '</a></li>';
+		echo '<li><a class="ui-sidebar-link" href="?p=' . $nr . '">' . $name . '</a></li>';
 	}
 	$stmt->free_result ();
 	$stmt->close ();
