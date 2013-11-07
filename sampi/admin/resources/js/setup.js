@@ -327,6 +327,7 @@ function checkSetupStep(step, submit) {
 					+ facebook_user.value + "&google_plus_user="
 					+ google_plus_user.value, true);
 			xmlhttp.send(); // Send HttpRequest
+			break;
 		case 5:
 			// Create HttpRequest
 			var xmlhttp;
@@ -376,5 +377,6 @@ function checkSetupStep(step, submit) {
 			xmlhttp.open("GET", ADMIN_REL_ROOT
 					+ "/query_check_setup_step.php?step=" + step, true);
 			xmlhttp.send(); // Send HttpRequest
+			break;
 	}
 }

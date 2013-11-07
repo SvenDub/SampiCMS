@@ -1112,8 +1112,10 @@ class Post {
 		$this->dateUpdated = $dateUpdated;
 		$this->keywords = $keywords;
 		
-		if ($db->getAuthorData($this->author)['full_name'] !== null) {
-			$this->author = $db->getAuthorData($this->author);
+		$authorData = $db->getAuthorData($this->author);
+		
+		if ($authorData['full_name'] !== null) {
+			$this->author = $authorData;
 		} else {
 			$this->author = array('full_name'=>$this->author);
 		}
