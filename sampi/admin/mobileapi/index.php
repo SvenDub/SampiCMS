@@ -106,6 +106,25 @@ if (isset ( $_POST ['tag'] ) && $_POST ['tag'] != '') {
 				echo json_encode ( $response );
 			}
 			break;
+		case 'edit_post' : // User edits a post
+			if ($user != false) {
+				$post_nr = @$_POST ['post_nr'];
+				$title = @$_POST ['title'];
+				$content = @$_POST ['content'];
+				$keywords = @$_POST ['keywords'];
+				if ($db->editPost ( $post_nr, $title, $content, $keywords, $username, $password ) == true) {
+					$response ['success'] = 1;
+				} else {
+					$response ['error'] = 1;
+					$response ['error_msg'] = 'Error editing post.';
+				}
+				echo json_encode( $response );
+			} else {
+				$response ['error'] = 1;
+				$response['error_msg'] = 'Error logging in. Are you sure you\'ve entered the correct credentials?';
+				echo json_encode( $response );
+			}
+			break;
 		case 'settings' : // User fetches settings
 			if ($user != false) {
 				$settings = $db->returnSettings ();

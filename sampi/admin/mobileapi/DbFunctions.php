@@ -65,4 +65,44 @@ class DbFunctions extends SampiCMS\DbFunctions {
 			}
 		}
 	}
+	
+	/**
+	 * Edit a post in the database.
+	 *
+	 * @param int $post_nr The id of the post.
+	 * @param string $title The title to set.
+	 * @param string $content The content to set.
+	 * @param string $keywords The keywords to set.
+	 * @param string $username The username of the poster.
+	 *        	Used in combination with $password to authenticate the poster.
+	 * @param string $password The password of the poster.
+	 *        	Used in combination with $username to authenticate the poster.
+	 * @return boolean True on success, false on failure
+	 *
+	 * @see \SampiCMS\Post
+	 */
+	function editPost($post_nr, $title, $content, $keywords, $username, $password) {
+		if ($post_nr !== "" && $title !== "" && $content !== "") {
+			if (SampiCMS\DbFunctions::checkAuth($username, $password)) {
+				$date = date ( 'Y-m-d H:i:s' );
+				if ($keywords) {
+					$stmt = $this->con->prepare( "UPDATE sampi_posts SET date_updated=?,title=?,content=?,keywords=? WHERE post_nr=?" );
+					$stmt->bind_param('ssssi', $date, $title, $content, $keywords, $post_nr);
+				} else {
+					$stmt = $this->con->prepare( "UPDATE sampi_posts SET date_updated=?,title=?,content=? WHERE post_nr=?" );
+					$stmt->bind_param('sssi', $date, $title, $content, $post_nr);
+				}
+				$stmt->execute();
+				if ($stmt->affected_rows > 0) {
+					$stmt->free_result();
+					$stmt->close();
+					return true;
+				}{
+					$stmt->free_result();
+					$stmt->close();
+					false;
+				}
+			}
+		}
+	}
 }
